@@ -13,9 +13,12 @@ import CourseDetails from './pages/FormationDetails';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard'; 
+import Salle3D from "./pages/Salle3D";
 
 // 👇 1. IMPORT DE LA PAGE DE PAIEMENT
 import InscriptionPage from './pages/InscriptionPage'; 
+// 👇 AJOUT : IMPORT DE LA PAGE DE SUCCÈS
+import RegistrationSuccess from './pages/RegistrationSuccess';
 
 function App() {
   const location = useLocation();
@@ -37,6 +40,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           
+          {/* Salle 3D */}
+          <Route path="/salle" element={<Salle3D />} />
+
           {/* Catalogue des formations */}
           <Route path="/formations" element={<Catalogue />} />
           
@@ -45,6 +51,9 @@ function App() {
           
           {/* 👇 2. LA ROUTE POUR LE PAIEMENT (Lien depuis CourseDetails) */}
           <Route path="/inscription/:id" element={<InscriptionPage />} />
+
+          {/* 👇 AJOUT : LA ROUTE DE CONFIRMATION D'INSCRIPTION */}
+          <Route path="/succes-inscription" element={<RegistrationSuccess />} />
 
           {/* Connexion / Inscription au site */}
           <Route path="/connexion" element={<Login />} />
