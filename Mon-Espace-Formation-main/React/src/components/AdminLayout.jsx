@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FaBell, FaCog, FaSignOutAlt, FaChartBar, FaUsers, 
-  FaCalendarAlt, FaChalkboardTeacher, FaCertificate 
+  FaCalendarAlt, FaChalkboardTeacher, FaCertificate, FaHome
 } from 'react-icons/fa';
 import './AdminLayout.css';
 
@@ -20,6 +20,11 @@ const AdminLayout = ({ children }) => {
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userRole');
     navigate('/connexion');
+  };
+
+  // Gestion du retour au site public
+  const handleBackToSite = () => {
+    navigate('/');
   };
 
   const tabs = [
@@ -45,6 +50,14 @@ const AdminLayout = ({ children }) => {
             </div>
           </div>
           <div className="admin-header-right">
+            <button 
+              className="admin-header-btn-text" 
+              onClick={handleBackToSite}
+              title="Voir le site"
+            >
+              <FaHome />
+              <span>Voir le site</span>
+            </button>
             <button className="admin-header-icon" title="Notifications">
               <FaBell />
               <span className="admin-badge">1</span>

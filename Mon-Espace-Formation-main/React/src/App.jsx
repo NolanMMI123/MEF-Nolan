@@ -31,6 +31,9 @@ function App() {
   
   // On cache le header/footer sur les pages de connexion/inscription compte
   const isAuthPage = location.pathname === '/connexion' || location.pathname === '/inscription-compte';
+  
+  // On cache le header/footer sur toutes les pages d'administration
+  const isAdminPage = location.pathname.startsWith('/admin');
 
   // Scroll en haut de page à chaque changement de route
   useEffect(() => {
@@ -40,7 +43,7 @@ function App() {
   return (
     <div className="d-flex flex-column min-vh-100">
 
-      {!isAuthPage && <Header />}
+      {!isAuthPage && !isAdminPage && <Header />}
 
       <main className="flex-grow-1">
         <Routes>
@@ -79,7 +82,7 @@ function App() {
         </Routes>
       </main>
 
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isAdminPage && <Footer />}
     </div>
   );
 }

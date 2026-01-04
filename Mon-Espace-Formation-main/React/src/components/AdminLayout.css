@@ -71,7 +71,7 @@
 .admin-header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .admin-header-icon {
@@ -88,6 +88,30 @@
 
 .admin-header-icon:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-header-btn-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.admin-header-btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-header-btn-text span {
+  font-size: 0.9rem;
 }
 
 .admin-badge {
