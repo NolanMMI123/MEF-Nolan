@@ -20,9 +20,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // 👇 LE CHANGEMENT RADICAL EST ICI 👇
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // AUTORISE TOUT LE MONDE, PARTOUT
+                        // Routes d'authentification accessibles à tous
+                        .requestMatchers("/api/auth/**").permitAll()
+                        // Routes admin nécessitent le rôle ADMIN
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Toutes les autres routes restent accessibles
+                        .anyRequest().permitAll()
                 );
         return http.build();
     }

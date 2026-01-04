@@ -12,10 +12,10 @@ public class User {
     private String nom;
     private String prenom;
     private String email;
+    private String role;
     private String password;
     private String entreprise;
     private String poste;
-    private String role;
     // Constructeur vide
     public User() {}
 
