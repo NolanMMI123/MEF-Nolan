@@ -72,35 +72,85 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/summary")
-    public ResponseEntity<Map<String, Object>> getSummary() {
+    public ResponseEntity<AdminDashboardSummary> getSummary() {
         try {
             // Récupérer toutes les inscriptions depuis MongoDB
             List<Inscription> allInscriptions = inscriptionRepository.findAll();
             
-            // Calculer le montant total des inscriptions
-            double montantTotal = allInscriptions.stream()
+            // Récupérer toutes les sessions depuis MongoDB
+            List<SessionFormation> allSessions = sessionRepository.findAll();
+            
+            // 1. Calculer le nombre total d'inscriptions
+            int totalInscriptions = allInscriptions.size();
+            
+            // 2. Calculer le CA total (somme des montants des inscriptions)
+            double totalRevenue = allInscriptions.stream()
                     .filter(i -> i.getAmount() != null)
                     .mapToDouble(Inscription::getAmount)
                     .sum();
             
-            // Calculer le nombre de participants (nombre d'inscriptions)
-            int nombreParticipants = allInscriptions.size();
+            // 3. Calculer le nombre de sessions à venir (sessions avec dates futures)
+            LocalDate now = LocalDate.now();
+            long upcomingSessionsCount = allSessions.stream()
+                    .filter(s -> s.getDates() != null && isFutureDate(s.getDates(), now))
+                    .count();
             
-            // Créer la réponse
-            Map<String, Object> summary = new HashMap<>();
-            summary.put("montantTotal", montantTotal);
-            summary.put("montantTotalFormatted", String.format("%.2f €", montantTotal));
-            summary.put("nombreParticipants", nombreParticipants);
-            summary.put("nombreInscriptions", nombreParticipants); // Alias pour clarté
+            // 4. Calculer le taux de remplissage moyen (fillRate)
+            double fillRate = allSessions.stream()
+                    .filter(s -> s.getPlacesTotales() > 0)
+                    .mapToDouble(s -> (double) s.getPlacesReservees() / s.getPlacesTotales() * 100)
+                    .average()
+                    .orElse(0.0);
+            
+            // 5. Calculer la tendance des inscriptions (comparaison avec le mois précédent)
+            LocalDate oneMonthAgo = now.minusMonths(1);
+            long inscriptionsThisMonth = allInscriptions.stream()
+                    .filter(i -> i.getDateInscription() != null 
+                            && i.getDateInscription().getMonth() == now.getMonth()
+                            && i.getDateInscription().getYear() == now.getYear())
+                    .count();
+            long inscriptionsLastMonth = allInscriptions.stream()
+                    .filter(i -> i.getDateInscription() != null 
+                            && i.getDateInscription().getMonth() == oneMonthAgo.getMonth()
+                            && i.getDateInscription().getYear() == oneMonthAgo.getYear())
+                    .count();
+            double registrationTrend = inscriptionsLastMonth > 0 
+                    ? ((double) (inscriptionsThisMonth - inscriptionsLastMonth) / inscriptionsLastMonth) * 100
+                    : 0.0;
+            
+            // 6. Calculer la tendance du CA (comparaison avec le mois précédent)
+            double revenueThisMonth = allInscriptions.stream()
+                    .filter(i -> i.getDateInscription() != null 
+                            && i.getAmount() != null
+                            && i.getDateInscription().getMonth() == now.getMonth()
+                            && i.getDateInscription().getYear() == now.getYear())
+                    .mapToDouble(Inscription::getAmount)
+                    .sum();
+            double revenueLastMonth = allInscriptions.stream()
+                    .filter(i -> i.getDateInscription() != null 
+                            && i.getAmount() != null
+                            && i.getDateInscription().getMonth() == oneMonthAgo.getMonth()
+                            && i.getDateInscription().getYear() == oneMonthAgo.getYear())
+                    .mapToDouble(Inscription::getAmount)
+                    .sum();
+            double revenueTrend = revenueLastMonth > 0 
+                    ? ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100
+                    : 0.0;
+            
+            // Créer et remplir l'objet AdminDashboardSummary
+            AdminDashboardSummary summary = new AdminDashboardSummary();
+            summary.setTotalInscriptions(totalInscriptions);
+            summary.setTotalRevenue(totalRevenue);
+            summary.setUpcomingSessions((int) upcomingSessionsCount);
+            summary.setRegistrationTrend(registrationTrend);
+            summary.setRevenueTrend(revenueTrend);
+            summary.setFillRate(fillRate);
             
             return ResponseEntity.ok(summary);
             
         } catch (Exception e) {
             e.printStackTrace();
-            Map<String, Object> error = new HashMap<>();
-            error.put("error", "Erreur lors du calcul du résumé");
-            error.put("message", e.getMessage());
-            return ResponseEntity.internalServerError().body(error);
+            return ResponseEntity.internalServerError().build();
         }
     }
 

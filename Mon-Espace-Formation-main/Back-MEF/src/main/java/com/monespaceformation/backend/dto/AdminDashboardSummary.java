@@ -7,18 +7,20 @@ public class AdminDashboardSummary {
     private int upcomingSessions;
     private double registrationTrend;
     private double revenueTrend;
+    private double fillRate;
 
     // Constructeur vide
     public AdminDashboardSummary() {}
 
     // Constructeur avec arguments
     public AdminDashboardSummary(int totalInscriptions, double totalRevenue, int upcomingSessions, 
-                                 double registrationTrend, double revenueTrend) {
+                                 double registrationTrend, double revenueTrend, double fillRate) {
         this.totalInscriptions = totalInscriptions;
         this.totalRevenue = totalRevenue;
         this.upcomingSessions = upcomingSessions;
         this.registrationTrend = registrationTrend;
         this.revenueTrend = revenueTrend;
+        this.fillRate = fillRate;
     }
 
     // Getters et Setters
@@ -60,5 +62,13 @@ public class AdminDashboardSummary {
 
     public void setRevenueTrend(double revenueTrend) {
         this.revenueTrend = revenueTrend;
+    }
+
+    public double getFillRate() {
+        return fillRate;
+    }
+
+    public void setFillRate(double fillRate) {
+        this.fillRate = fillRate;
     }
 }
