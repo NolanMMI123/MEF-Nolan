@@ -1,0 +1,139 @@
+.manage-trainers {
+  padding: 24px 0;
+}
+
+/* Trainers Grid */
+.trainers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.trainer-card {
+  background-color: var(--admin-white);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.trainer-avatar {
+  width: 64px;
+  height: 64px;
+  background-color: var(--admin-light-bg);
+  color: var(--admin-primary-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.trainer-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+}
+
+.trainer-rating {
+  font-size: 0.9rem;
+  color: var(--admin-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.trainer-speciality {
+  margin: 8px 0;
+}
+
+.trainer-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: var(--admin-light-bg);
+  color: var(--admin-text-dark);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.trainer-stats {
+  width: 100%;
+  margin: 16px 0;
+  padding: 16px;
+  background-color: var(--admin-light-bg);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.trainer-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.trainer-stat-label {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+}
+
+.trainer-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--admin-primary-blue);
+}
+
+.trainer-contact {
+  width: 100%;
+  text-align: left;
+  padding-top: 12px;
+  border-top: 1px solid var(--admin-border-color);
+}
+
+.trainer-email {
+  font-size: 0.9rem;
+  color: var(--admin-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trainer-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.trainer-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background-color: var(--admin-light-bg);
+  border: 1px solid var(--admin-border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--admin-text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.trainer-action-btn:hover {
+  background-color: var(--admin-primary-blue);
+  color: white;
+  border-color: var(--admin-primary-blue);
+}
+

@@ -1,0 +1,122 @@
+.admin-dashboard {
+  padding: 24px 0;
+}
+
+.admin-page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin-bottom: 24px;
+}
+
+/* Stats Grid */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.admin-stat-card {
+  background-color: var(--admin-white);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.admin-stat-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.admin-stat-content {
+  flex: 1;
+}
+
+.admin-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--admin-text-dark);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.admin-stat-label {
+  font-size: 0.9rem;
+  color: var(--admin-text-muted);
+  margin-bottom: 8px;
+}
+
+.admin-stat-trend {
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-stat-trend.positive {
+  color: #10b981;
+}
+
+.admin-stat-trend.negative {
+  color: #ef4444;
+}
+
+.admin-stat-detail {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+}
+
+/* Info Box */
+.admin-info-box {
+  background-color: var(--admin-white);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: var(--admin-text-muted);
+  line-height: 1.6;
+}
+
+.admin-info-box p {
+  margin: 0 0 12px 0;
+}
+
+.admin-info-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* Loading & Error */
+.admin-loading,
+.admin-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--admin-text-muted);
+}
+
+.admin-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--admin-border-color);
+  border-top-color: var(--admin-primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.admin-error {
+  color: #ef4444;
+}
+

@@ -19,6 +19,11 @@ import Salle3D from "./pages/Salle3D";
 import InscriptionPage from './pages/InscriptionPage'; 
 // 👇 AJOUT : IMPORT DE LA PAGE DE SUCCÈS
 import RegistrationSuccess from './pages/RegistrationSuccess';
+// 👇 IMPORTS ADMIN
+import AdminDashboard from './pages/AdminDashboard';
+import ManageInscriptions from './pages/ManageInscriptions';
+import ManageSessions from './pages/ManageSessions';
+import ManageTrainers from './pages/ManageTrainers';
 
 function App() {
   const location = useLocation();
@@ -61,6 +66,12 @@ function App() {
           
           {/* Espace membre */}
           <Route path="/dashboard" element={<Dashboard />} />
+          
+          {/* Administration */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/inscriptions" element={<ManageInscriptions />} />
+          <Route path="/admin/sessions" element={<ManageSessions />} />
+          <Route path="/admin/formateurs" element={<ManageTrainers />} />
           
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
