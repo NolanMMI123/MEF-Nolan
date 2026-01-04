@@ -21,7 +21,7 @@ const Login = () => {
 
         try {
             // Appel au serveur Java sur le port 8080
-            const response = await fetch('http://localhost:8080/api/auth/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -36,15 +36,8 @@ const Login = () => {
                 localStorage.setItem('user', JSON.stringify(data)); 
                 // On sauvegarde aussi l'email spécifiquement pour ton dashboard actuel
                 localStorage.setItem('userEmail', email);
-                // Stocker le rôle dans le localStorage
-                localStorage.setItem('role', data.role);
 
-                // Redirection selon le rôle
-                if (data.role === 'ADMIN') {
-                    navigate('/admin-dashboard');
-                } else {
-                    navigate('/dashboard');
-                }
+                navigate('/dashboard'); // On redirige vers l'accueil
             } else {
                 // Si le serveur refuse (mauvais mot de passe, etc.)
                 setError(data.message || "Email ou mot de passe incorrect");

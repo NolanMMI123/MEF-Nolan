@@ -2,13 +2,10 @@ package com.monespaceformation.backend.config;
 
 import com.monespaceformation.backend.model.Training;
 import com.monespaceformation.backend.model.TrainingDocument;
-import com.monespaceformation.backend.model.User;
 import com.monespaceformation.backend.repository.TrainingRepository;
-import com.monespaceformation.backend.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 
@@ -16,44 +13,8 @@ import java.util.Arrays;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initData(TrainingRepository trainingRepository, 
-                                UserRepository userRepository,
-                                PasswordEncoder passwordEncoder) {
+    CommandLineRunner initData(TrainingRepository trainingRepository) {
         return args -> {
-            // Créer l'utilisateur admin s'il n'existe pas (email en minuscules)
-            String adminEmail = "admin@txlforma.fr".toLowerCase();
-            if (!userRepository.existsByEmail(adminEmail)) {
-                User admin = new User();
-                admin.setNom("Administrateur");
-                admin.setPrenom("Admin");
-                admin.setEmail(adminEmail);
-                admin.setPassword(passwordEncoder.encode("123456789")); // Mot de passe par défaut
-                admin.setRole("ADMIN");
-                userRepository.save(admin);
-                System.out.println("--- UTILISATEUR ADMIN CRÉÉ (admin@txlforma.fr) ---");
-            } else {
-                // S'assurer que l'utilisateur admin existant a bien le rôle ADMIN
-                User existingAdmin = userRepository.findByEmail(adminEmail).orElse(null);
-                if (existingAdmin != null) {
-                    boolean needsUpdate = false;
-                    // Forcer la mise à jour si le rôle est null, vide ou différent de ADMIN
-                    if (existingAdmin.getRole() == null || existingAdmin.getRole().isEmpty() || !"ADMIN".equals(existingAdmin.getRole())) {
-                        existingAdmin.setRole("ADMIN");
-                        needsUpdate = true;
-                        System.out.println("--- RÔLE ADMIN ATTRIBUÉ/MIS À JOUR POUR L'UTILISATEUR EXISTANT ---");
-                    }
-                    // S'assurer que l'email est en minuscules
-                    if (!adminEmail.equals(existingAdmin.getEmail())) {
-                        existingAdmin.setEmail(adminEmail);
-                        needsUpdate = true;
-                        System.out.println("--- EMAIL ADMIN NORMALISÉ EN MINUSCULES ---");
-                    }
-                    if (needsUpdate) {
-                        userRepository.save(existingAdmin);
-                    }
-                }
-            }
-
             // On ajoute la formation SEULEMENT si la base est vide
             if (trainingRepository.count() == 0) {
                 Training t = new Training();

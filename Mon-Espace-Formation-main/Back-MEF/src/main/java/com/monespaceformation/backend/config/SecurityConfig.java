@@ -20,15 +20,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 👇 LE CHANGEMENT RADICAL EST ICI 👇
                 .authorizeHttpRequests(auth -> auth
-                        // Routes d'authentification accessibles à tous
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Routes admin nécessitent le rôle ADMIN
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        // Routes dashboard nécessitent le rôle USER
-                        .requestMatchers("/api/dashboard/**").hasRole("USER")
-                        // Toutes les autres routes restent accessibles
-                        .anyRequest().permitAll()
+                        .anyRequest().permitAll() // AUTORISE TOUT LE MONDE, PARTOUT
                 );
         return http.build();
     }
@@ -39,15 +33,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    UrlBasedCorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
+UrlBasedCorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+    configuration.setAllowedOriginPatterns(Arrays.asList(
+        "http://localhost:5173",
+        "https://*.vercel.app"
+    ));
+    configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
+
+    // Si tu n'utilises PAS de cookies/session côté navigateur, mets false (plus simple)
+    configuration.setAllowCredentials(false);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
+
 }
