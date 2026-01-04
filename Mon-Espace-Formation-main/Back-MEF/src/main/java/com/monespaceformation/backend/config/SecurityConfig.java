@@ -25,6 +25,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         // Routes admin nécessitent le rôle ADMIN
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Routes dashboard nécessitent le rôle USER
+                        .requestMatchers("/api/dashboard/**").hasRole("USER")
                         // Toutes les autres routes restent accessibles
                         .anyRequest().permitAll()
                 );
