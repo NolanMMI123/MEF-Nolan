@@ -66,11 +66,16 @@ public class AuthController {
             // Vérification du mot de passe
             if (passwordEncoder.matches(password, user.getPassword())) {
                 System.out.println("✓ Mot de passe correct pour : " + emailLower);
-                // 👇 LA CORRECTION EST ICI 👇
-                // Au lieu de construire une Map manuelle incomplète, 
-                // on renvoie TOUT l'objet user. 
-                // Comme ça, l'ID est envoyé automatiquement.
-                return ResponseEntity.ok(user);
+                
+                // Construire la réponse avec token et role
+                // Utiliser l'ID de l'utilisateur comme token (peut être remplacé par JWT plus tard)
+                String token = user.getId() != null ? user.getId() : "";
+                String userRole = user.getRole() != null ? user.getRole() : "USER";
+                
+                return ResponseEntity.ok(Map.of(
+                    "token", token,
+                    "role", userRole
+                ));
             } else {
                 System.out.println("✗ Mot de passe incorrect pour : " + emailLower);
             }

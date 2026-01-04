@@ -34,10 +34,23 @@ public class DataInitializer {
             } else {
                 // S'assurer que l'utilisateur admin existant a bien le rôle ADMIN
                 User existingAdmin = userRepository.findByEmail(adminEmail).orElse(null);
-                if (existingAdmin != null && !"ADMIN".equals(existingAdmin.getRole())) {
-                    existingAdmin.setRole("ADMIN");
-                    userRepository.save(existingAdmin);
-                    System.out.println("--- RÔLE ADMIN ATTRIBUÉ À L'UTILISATEUR EXISTANT ---");
+                if (existingAdmin != null) {
+                    boolean needsUpdate = false;
+                    // Forcer la mise à jour si le rôle est null, vide ou différent de ADMIN
+                    if (existingAdmin.getRole() == null || existingAdmin.getRole().isEmpty() || !"ADMIN".equals(existingAdmin.getRole())) {
+                        existingAdmin.setRole("ADMIN");
+                        needsUpdate = true;
+                        System.out.println("--- RÔLE ADMIN ATTRIBUÉ/MIS À JOUR POUR L'UTILISATEUR EXISTANT ---");
+                    }
+                    // S'assurer que l'email est en minuscules
+                    if (!adminEmail.equals(existingAdmin.getEmail())) {
+                        existingAdmin.setEmail(adminEmail);
+                        needsUpdate = true;
+                        System.out.println("--- EMAIL ADMIN NORMALISÉ EN MINUSCULES ---");
+                    }
+                    if (needsUpdate) {
+                        userRepository.save(existingAdmin);
+                    }
                 }
             }
 

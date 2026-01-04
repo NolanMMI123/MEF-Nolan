@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // --- IMPORTS DES PAGES ---
 import Header from './components/Header';
@@ -14,11 +14,24 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard'; 
 import Salle3D from "./pages/Salle3D";
+import AdminDashboard from './pages/AdminDashboard';
 
 // 👇 1. IMPORT DE LA PAGE DE PAIEMENT
 import InscriptionPage from './pages/InscriptionPage'; 
 // 👇 AJOUT : IMPORT DE LA PAGE DE SUCCÈS
 import RegistrationSuccess from './pages/RegistrationSuccess';
+
+// Composant de protection de route pour les administrateurs
+const ProtectedAdminRoute = ({ children }) => {
+  const role = localStorage.getItem('role');
+  
+  if (role === 'ADMIN') {
+    return children;
+  } else {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas admin
+    return <Navigate to="/connexion" replace />;
+  }
+};
 
 function App() {
   const location = useLocation();
@@ -61,6 +74,16 @@ function App() {
           
           {/* Espace membre */}
           <Route path="/dashboard" element={<Dashboard />} />
+          
+          {/* Espace admin - Route protégée */}
+          <Route 
+            path="/admin-dashboard" 
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboard />
+              </ProtectedAdminRoute>
+            } 
+          />
           
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
