@@ -20,19 +20,20 @@ public class DataInitializer {
                                 UserRepository userRepository,
                                 PasswordEncoder passwordEncoder) {
         return args -> {
-            // Créer l'utilisateur admin s'il n'existe pas
-            if (!userRepository.existsByEmail("admin@txlforma.fr")) {
+            // Créer l'utilisateur admin s'il n'existe pas (email en minuscules)
+            String adminEmail = "admin@txlforma.fr".toLowerCase();
+            if (!userRepository.existsByEmail(adminEmail)) {
                 User admin = new User();
                 admin.setNom("Administrateur");
                 admin.setPrenom("Admin");
-                admin.setEmail("admin@txlforma.fr");
+                admin.setEmail(adminEmail);
                 admin.setPassword(passwordEncoder.encode("123456789")); // Mot de passe par défaut
                 admin.setRole("ADMIN");
                 userRepository.save(admin);
                 System.out.println("--- UTILISATEUR ADMIN CRÉÉ (admin@txlforma.fr) ---");
             } else {
                 // S'assurer que l'utilisateur admin existant a bien le rôle ADMIN
-                User existingAdmin = userRepository.findByEmail("admin@txlforma.fr").orElse(null);
+                User existingAdmin = userRepository.findByEmail(adminEmail).orElse(null);
                 if (existingAdmin != null && !"ADMIN".equals(existingAdmin.getRole())) {
                     existingAdmin.setRole("ADMIN");
                     userRepository.save(existingAdmin);
