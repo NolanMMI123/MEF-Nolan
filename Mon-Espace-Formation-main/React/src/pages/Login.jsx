@@ -36,8 +36,18 @@ const Login = () => {
                 localStorage.setItem('user', JSON.stringify(data)); 
                 // On sauvegarde aussi l'email spécifiquement pour ton dashboard actuel
                 localStorage.setItem('userEmail', email);
+                // On sauvegarde le rôle pour la redirection
+                if (data.role) {
+                    localStorage.setItem('userRole', data.role);
+                }
 
-                navigate('/dashboard'); // On redirige vers l'accueil
+                // Redirection selon le rôle
+                const userRole = data.role || 'USER';
+                if (userRole === 'ROLE_ADMIN') {
+                    navigate('/admin');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 // Si le serveur refuse (mauvais mot de passe, etc.)
                 setError(data.message || "Email ou mot de passe incorrect");

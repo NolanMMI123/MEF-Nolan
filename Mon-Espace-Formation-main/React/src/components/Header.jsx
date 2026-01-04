@@ -19,6 +19,7 @@ const Header = () => {
     const handleLogout = () => {
         localStorage.removeItem('userEmail'); // On supprime la session
         localStorage.removeItem('user');
+        localStorage.removeItem('userRole');
         setIsLoggedIn(false);
         navigate('/connexion');
     };

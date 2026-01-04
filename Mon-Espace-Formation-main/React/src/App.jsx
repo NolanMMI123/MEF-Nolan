@@ -24,6 +24,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ManageInscriptions from './pages/ManageInscriptions';
 import ManageSessions from './pages/ManageSessions';
 import ManageTrainers from './pages/ManageTrainers';
+import AdminRoute from './components/AdminRoute';
 
 function App() {
   const location = useLocation();
@@ -67,11 +68,11 @@ function App() {
           {/* Espace membre */}
           <Route path="/dashboard" element={<Dashboard />} />
           
-          {/* Administration */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/inscriptions" element={<ManageInscriptions />} />
-          <Route path="/admin/sessions" element={<ManageSessions />} />
-          <Route path="/admin/formateurs" element={<ManageTrainers />} />
+          {/* Administration - Routes protégées */}
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/inscriptions" element={<AdminRoute><ManageInscriptions /></AdminRoute>} />
+          <Route path="/admin/sessions" element={<AdminRoute><ManageSessions /></AdminRoute>} />
+          <Route path="/admin/formateurs" element={<AdminRoute><ManageTrainers /></AdminRoute>} />
           
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

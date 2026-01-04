@@ -14,10 +14,11 @@ const AdminLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Vérifier si l'utilisateur est connecté (pour l'instant, pas de gestion de rôle)
+  // Gestion de la déconnexion
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
     navigate('/connexion');
   };
 

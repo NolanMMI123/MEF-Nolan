@@ -2,18 +2,22 @@ package com.monespaceformation.backend.config;
 
 import com.monespaceformation.backend.model.Training;
 import com.monespaceformation.backend.model.TrainingDocument;
+import com.monespaceformation.backend.model.User;
 import com.monespaceformation.backend.repository.TrainingRepository;
+import com.monespaceformation.backend.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initData(TrainingRepository trainingRepository) {
+    CommandLineRunner initData(TrainingRepository trainingRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             // On ajoute la formation SEULEMENT si la base est vide
             if (trainingRepository.count() == 0) {
@@ -40,6 +44,22 @@ public class DataInitializer {
 
                 trainingRepository.save(t);
                 System.out.println("--- DONNÉES DE DÉMO AJOUTÉES (Formation React) ---");
+            }
+
+            // Création de l'utilisateur admin par défaut
+            Optional<User> adminOpt = userRepository.findByEmail("admin@mef.fr");
+            if (adminOpt.isEmpty()) {
+                User admin = new User();
+                admin.setNom("Administrateur");
+                admin.setPrenom("Admin");
+                admin.setEmail("admin@mef.fr");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole("ROLE_ADMIN");
+                
+                userRepository.save(admin);
+                System.out.println("--- COMPTE ADMIN CRÉÉ (admin@mef.fr / admin123) ---");
+            } else {
+                System.out.println("--- COMPTE ADMIN EXISTE DÉJÀ ---");
             }
         };
     }
