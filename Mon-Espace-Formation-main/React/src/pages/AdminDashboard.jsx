@@ -24,11 +24,13 @@ const AdminDashboard = () => {
     title: '',
     duration: '',
     location: '',
+    price: '',
     trainerName: '',
     trainerRole: '',
     trainerEmail: '',
     status: 'A Venir'
   });
+  const [editingTrainingId, setEditingTrainingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -69,26 +71,46 @@ const AdminDashboard = () => {
   }, []);
 
   // Gérer l'ouverture du modal de formation
-  const handleOpenTrainingModal = () => {
-    setTrainingFormData({
-      title: '',
-      duration: '',
-      location: '',
-      trainerName: '',
-      trainerRole: '',
-      trainerEmail: '',
-      status: 'A Venir'
-    });
+  const handleOpenTrainingModal = (training = null) => {
+    if (training) {
+      // Mode édition
+      setEditingTrainingId(training.id);
+      setTrainingFormData({
+        title: training.title || '',
+        duration: training.duration || '',
+        location: training.location || '',
+        price: training.price || '',
+        trainerName: training.trainerName || '',
+        trainerRole: training.trainerRole || '',
+        trainerEmail: training.trainerEmail || '',
+        status: training.status || 'A Venir'
+      });
+    } else {
+      // Mode création
+      setEditingTrainingId(null);
+      setTrainingFormData({
+        title: '',
+        duration: '',
+        location: '',
+        price: '',
+        trainerName: '',
+        trainerRole: '',
+        trainerEmail: '',
+        status: 'A Venir'
+      });
+    }
     setShowTrainingModal(true);
   };
 
   // Gérer la fermeture du modal
   const handleCloseTrainingModal = () => {
     setShowTrainingModal(false);
+    setEditingTrainingId(null);
     setTrainingFormData({
       title: '',
       duration: '',
       location: '',
+      price: '',
       trainerName: '',
       trainerRole: '',
       trainerEmail: '',
@@ -110,20 +132,26 @@ const AdminDashboard = () => {
     e.preventDefault();
 
     // Validation
-    if (!trainingFormData.title || !trainingFormData.duration || !trainingFormData.location) {
+    if (!trainingFormData.title || !trainingFormData.duration || !trainingFormData.location || !trainingFormData.price) {
       setToast({ message: 'Veuillez remplir tous les champs obligatoires', type: 'error' });
       return;
     }
 
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:8080/api/trainings', {
-        method: 'POST',
+      const url = editingTrainingId 
+        ? `http://localhost:8080/api/trainings/${editingTrainingId}`
+        : 'http://localhost:8080/api/trainings';
+      const method = editingTrainingId ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           ...trainingFormData,
+          price: trainingFormData.price ? parseFloat(trainingFormData.price) : null,
           startDate: '',
           endDate: '',
           sessionRef: ''
@@ -131,14 +159,20 @@ const AdminDashboard = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la création de la formation');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Erreur lors de la sauvegarde de la formation');
       }
 
-      setToast({ message: 'Formation créée avec succès !', type: 'success' });
+      setToast({ 
+        message: editingTrainingId 
+          ? 'Formation modifiée avec succès !' 
+          : 'Formation créée avec succès !', 
+        type: 'success' 
+      });
       handleCloseTrainingModal();
     } catch (err) {
       console.error('Erreur:', err);
-      setToast({ message: err.message || 'Erreur lors de la création de la formation', type: 'error' });
+      setToast({ message: err.message || 'Erreur lors de la sauvegarde de la formation', type: 'error' });
     } finally {
       setSubmitting(false);
     }
@@ -496,6 +530,21 @@ const AdminDashboard = () => {
               </div>
 
               <div className="form-group">
+                <label className="form-label">Prix (€) *</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={trainingFormData.price}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="Ex: 2490"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
                 <label className="form-label">Nom du formateur</label>
                 <input
                   type="text"
@@ -550,7 +599,10 @@ const AdminDashboard = () => {
                   Annuler
                 </button>
                 <button type="submit" className="btn-submit" disabled={submitting}>
-                  {submitting ? 'Création...' : 'Créer la formation'}
+                  {submitting 
+                    ? (editingTrainingId ? 'Modification...' : 'Création...') 
+                    : (editingTrainingId ? 'Modifier la formation' : 'Créer la formation')
+                  }
                 </button>
               </div>
             </form>

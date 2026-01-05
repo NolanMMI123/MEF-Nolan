@@ -1,0 +1,449 @@
+.manage-trainings-page {
+  min-height: 100vh;
+  background-color: var(--admin-light-bg);
+  padding: 24px 0;
+}
+
+/* =========================================
+   EN-TÊTE
+   ========================================= */
+.manage-trainings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.manage-title-section {
+  flex: 1;
+}
+
+.manage-page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manage-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 12px;
+  background-color: var(--admin-primary-blue);
+  color: white;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.manage-page-subtitle {
+  font-size: 0.95rem;
+  color: var(--admin-text-muted);
+  margin: 0;
+}
+
+.admin-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--admin-primary-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-btn-primary:hover {
+  background-color: #0a1f3d;
+}
+
+/* =========================================
+   GRID DES FORMATIONS
+   ========================================= */
+.manage-trainings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.training-card {
+  background-color: var(--admin-white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.training-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.training-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.training-reference {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--admin-text-muted);
+  font-family: monospace;
+}
+
+.training-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.training-status.status-a-venir {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.training-status.status-en-cours {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.training-status.status-terminé {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.training-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin-bottom: 4px;
+}
+
+.training-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.training-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.training-detail-label {
+  color: var(--admin-text-muted);
+  font-weight: 500;
+}
+
+.training-detail-value {
+  color: var(--admin-text-dark);
+  font-weight: 500;
+}
+
+.training-detail-value.price {
+  color: var(--admin-primary-blue);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.training-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--admin-border-color);
+}
+
+.training-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--admin-border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: var(--admin-white);
+  color: var(--admin-text-dark);
+}
+
+.training-action-btn.edit {
+  color: var(--admin-primary-blue);
+  border-color: var(--admin-primary-blue);
+}
+
+.training-action-btn.edit:hover {
+  background-color: var(--admin-primary-blue);
+  color: white;
+}
+
+.training-action-btn.delete {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.training-action-btn.delete:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+.training-action-btn.delete.confirm {
+  background-color: #dc2626;
+  color: white;
+  animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* =========================================
+   MODAL STYLES
+   ========================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modal-content {
+  background-color: var(--admin-white);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid var(--admin-border-color);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--admin-text-muted);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--admin-text-dark);
+}
+
+.modal-form {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--admin-text-dark);
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--admin-border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--admin-text-dark);
+  background-color: var(--admin-white);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: var(--admin-primary-blue);
+  box-shadow: 0 0 0 3px rgba(15, 45, 92, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--admin-border-color);
+}
+
+.btn-cancel {
+  padding: 12px 24px;
+  background-color: var(--admin-light-bg);
+  border: 1px solid var(--admin-border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--admin-text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-submit {
+  padding: 12px 24px;
+  background-color: var(--admin-primary-blue);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #0a1f3d;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   ÉTAT VIDE
+   ========================================= */
+.manage-empty-state {
+  background-color: var(--admin-white);
+  border-radius: 12px;
+  padding: 100px 24px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.manage-empty-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  opacity: 0.4;
+}
+
+.manage-empty-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin: 0 0 12px 0;
+}
+
+.manage-empty-hint {
+  font-size: 0.95rem;
+  color: var(--admin-text-muted);
+  margin: 8px 0;
+}
+
+/* =========================================
+   LOADING & ERROR
+   ========================================= */
+.admin-loading,
+.admin-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--admin-text-muted);
+}
+
+.admin-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--admin-border-color);
+  border-top-color: var(--admin-primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.admin-error {
+  color: #ef4444;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 768px) {
+  .manage-trainings-header {
+    flex-direction: column;
+  }
+
+  .admin-btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .manage-trainings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .training-actions {
+    flex-direction: column;
+  }
+}
+
