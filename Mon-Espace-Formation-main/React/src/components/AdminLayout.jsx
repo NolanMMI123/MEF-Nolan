@@ -62,9 +62,13 @@ const AdminLayout = ({ children }) => {
               <FaBell />
               <span className="admin-badge">1</span>
             </button>
-            <button className="admin-header-icon" title="Paramètres">
+            <Link 
+              to="/admin/settings" 
+              className="admin-header-icon" 
+              title="Paramètres"
+            >
               <FaCog />
-            </button>
+            </Link>
             <div className="admin-user">
               <span className="admin-user-icon">👤</span>
               <div>

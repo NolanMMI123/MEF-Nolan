@@ -1,8 +1,10 @@
 package com.monespaceformation.backend.config;
 
+import com.monespaceformation.backend.model.Settings;
 import com.monespaceformation.backend.model.Training;
 import com.monespaceformation.backend.model.TrainingDocument;
 import com.monespaceformation.backend.model.User;
+import com.monespaceformation.backend.repository.SettingsRepository;
 import com.monespaceformation.backend.repository.TrainingRepository;
 import com.monespaceformation.backend.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -17,7 +19,8 @@ import java.util.Optional;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initData(TrainingRepository trainingRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    CommandLineRunner initData(TrainingRepository trainingRepository, UserRepository userRepository, 
+                               PasswordEncoder passwordEncoder, SettingsRepository settingsRepository) {
         return args -> {
             // On ajoute la formation SEULEMENT si la base est vide
             if (trainingRepository.count() == 0) {
@@ -60,6 +63,21 @@ public class DataInitializer {
                 System.out.println("--- COMPTE ADMIN CRÉÉ (admin@mef.fr / admin123) ---");
             } else {
                 System.out.println("--- COMPTE ADMIN EXISTE DÉJÀ ---");
+            }
+
+            // Création des paramètres par défaut de la plateforme
+            if (!settingsRepository.existsById("default")) {
+                Settings defaultSettings = new Settings();
+                defaultSettings.setId("default");
+                defaultSettings.setPlatformName("Mon Espace Formation");
+                defaultSettings.setContactEmail("contact@mef.fr");
+                defaultSettings.setFullPaymentRequired(true);
+                defaultSettings.setCancellationDelayDays(7);
+                defaultSettings.setRefundRatePercentage(80);
+                defaultSettings.setMaintenanceMode(false);
+                
+                settingsRepository.save(defaultSettings);
+                System.out.println("--- PARAMÈTRES PAR DÉFAUT CRÉÉS ---");
             }
         };
     }

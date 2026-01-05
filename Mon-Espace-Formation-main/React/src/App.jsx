@@ -24,6 +24,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ManageInscriptions from './pages/ManageInscriptions';
 import ManageSessions from './pages/ManageSessions';
 import ManageTrainers from './pages/ManageTrainers';
+import AdminSettings from './pages/AdminSettings';
 import AdminRoute from './components/AdminRoute';
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
           <Route path="/admin/inscriptions" element={<AdminRoute><ManageInscriptions /></AdminRoute>} />
           <Route path="/admin/sessions" element={<AdminRoute><ManageSessions /></AdminRoute>} />
           <Route path="/admin/formateurs" element={<AdminRoute><ManageTrainers /></AdminRoute>} />
+          <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
           
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
