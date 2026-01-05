@@ -200,8 +200,8 @@ const RegistrationSuccess = () => {
                             <h6 className="fw-bold text-dark mb-2">Besoin d'aide ?</h6>
                             <p className="small text-muted mb-3">Une question sur votre inscription ?</p>
                             <div className="small">
-                                <div className="mb-1">📧 contact@txlforma.fr</div>
-                                <div>📞 01 23 45 67 89</div>
+                                <div className="mb-1"> contact@txlforma.fr</div>
+                                <div> 01 23 45 67 89</div>
                             </div>
                         </div>
                     </div>
