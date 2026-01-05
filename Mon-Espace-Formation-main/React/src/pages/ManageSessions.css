@@ -161,6 +161,39 @@
   border-color: var(--admin-primary-blue);
 }
 
+.session-action-btn.edit {
+  color: var(--admin-primary-blue);
+  border-color: var(--admin-primary-blue);
+  background-color: var(--admin-white);
+}
+
+.session-action-btn.edit:hover {
+  background-color: var(--admin-primary-blue);
+  color: white;
+}
+
+.session-action-btn.delete {
+  color: #dc2626;
+  border-color: #dc2626;
+  background-color: var(--admin-white);
+}
+
+.session-action-btn.delete:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+.session-action-btn.delete.confirm {
+  background-color: #dc2626;
+  color: white;
+  animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

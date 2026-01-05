@@ -25,6 +25,7 @@ import ManageInscriptions from './pages/ManageInscriptions';
 import ManageSessions from './pages/ManageSessions';
 import ManageTrainers from './pages/ManageTrainers';
 import ManageTrainings from './pages/ManageTrainings';
+import AdminAttestations from './pages/AdminAttestations';
 import AdminSettings from './pages/AdminSettings';
 import AdminRoute from './components/AdminRoute';
 
@@ -79,6 +80,7 @@ function App() {
           <Route path="/admin/sessions" element={<AdminRoute><ManageSessions /></AdminRoute>} />
           <Route path="/admin/formateurs" element={<AdminRoute><ManageTrainers /></AdminRoute>} />
           <Route path="/admin/formations" element={<AdminRoute><ManageTrainings /></AdminRoute>} />
+          <Route path="/admin/attestations" element={<AdminRoute><AdminAttestations /></AdminRoute>} />
           <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
           
           <Route path="/about" element={<About />} />

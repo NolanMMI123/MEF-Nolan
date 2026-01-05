@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FaBell, FaCog, FaSignOutAlt, FaChartBar, FaUsers, 
   FaCalendarAlt, FaChalkboardTeacher, FaCertificate, FaHome
 } from 'react-icons/fa';
+import { X } from 'lucide-react';
 import './AdminLayout.css';
 
 /**
@@ -13,6 +14,84 @@ import './AdminLayout.css';
 const AdminLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationsRef = useRef(null);
+
+  // Récupérer les notifications
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/notifications');
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data);
+        // Compter les non lues
+        const unread = data.filter(n => !n.isRead).length;
+        setUnreadCount(unread);
+      }
+    } catch (err) {
+      console.error('Erreur lors du chargement des notifications:', err);
+    }
+  };
+
+  // Polling toutes les 60 secondes
+  useEffect(() => {
+    fetchNotifications(); // Charger immédiatement
+    
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 60000); // 60 secondes
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fermer le dropdown si on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Marquer toutes les notifications comme lues
+  const handleMarkAllAsRead = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/notifications/mark-all-read', {
+        method: 'PUT'
+      });
+      if (response.ok) {
+        await fetchNotifications(); // Rafraîchir la liste
+      }
+    } catch (err) {
+      console.error('Erreur lors du marquage des notifications:', err);
+    }
+  };
+
+  // Calculer le temps écoulé
+  const getTimeAgo = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'À l\'instant';
+      if (diffMins < 60) return `Il y a ${diffMins} min`;
+      if (diffHours < 24) return `Il y a ${diffHours}h`;
+      if (diffDays < 7) return `Il y a ${diffDays}j`;
+      return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+    } catch (e) {
+      return 'N/A';
+    }
+  };
 
   // Gestion de la déconnexion
   const handleLogout = () => {
@@ -58,10 +137,58 @@ const AdminLayout = ({ children }) => {
               <FaHome />
               <span>Voir le site</span>
             </button>
-            <button className="admin-header-icon" title="Notifications">
-              <FaBell />
-              <span className="admin-badge">1</span>
-            </button>
+            <div className="admin-notifications-wrapper" ref={notificationsRef}>
+              <button 
+                className="admin-header-icon" 
+                title="Notifications"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <FaBell />
+                {unreadCount > 0 && (
+                  <span className="admin-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+                )}
+              </button>
+              
+              {/* Dropdown des notifications */}
+              {showNotifications && (
+                <div className="admin-notifications-dropdown">
+                  <div className="admin-notifications-header">
+                    <h3 className="admin-notifications-title">Notifications</h3>
+                    {unreadCount > 0 && (
+                      <button 
+                        className="admin-mark-all-read-btn"
+                        onClick={handleMarkAllAsRead}
+                      >
+                        Tout marquer comme lu
+                      </button>
+                    )}
+                  </div>
+                  
+                  {notifications.length === 0 ? (
+                    <div className="admin-notifications-empty">
+                      <p>Aucune notification</p>
+                    </div>
+                  ) : (
+                    <div className="admin-notifications-list">
+                      {notifications.map((notification) => (
+                        <div 
+                          key={notification.id} 
+                          className={`admin-notification-item ${!notification.isRead ? 'unread' : ''}`}
+                        >
+                          <div className="admin-notification-content">
+                            <div className="admin-notification-message">{notification.message}</div>
+                            <div className="admin-notification-time">{getTimeAgo(notification.createdAt)}</div>
+                          </div>
+                          {!notification.isRead && (
+                            <div className="admin-notification-dot"></div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
             <Link 
               to="/admin/settings" 
               className="admin-header-icon" 

@@ -2,9 +2,11 @@ package com.monespaceformation.backend.controller;
 
 import com.monespaceformation.backend.dto.AdminInscriptionDTO;
 import com.monespaceformation.backend.model.Inscription;
+import com.monespaceformation.backend.model.Notification;
 import com.monespaceformation.backend.model.SessionFormation;
 import com.monespaceformation.backend.model.User;
 import com.monespaceformation.backend.repository.InscriptionRepository;
+import com.monespaceformation.backend.repository.NotificationRepository;
 import com.monespaceformation.backend.repository.SessionRepository;
 import com.monespaceformation.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class InscriptionController {
     @Autowired
     private SessionRepository sessionRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     // 1. S'INSCRIRE (POST)
     @PostMapping
     public Inscription createInscription(@RequestBody Inscription inscription) {
@@ -35,7 +40,53 @@ public class InscriptionController {
         if (inscriptionRepository.existsByUserIdAndSessionId(inscription.getUserId(), inscription.getSessionId())) {
             throw new RuntimeException("Utilisateur déjà inscrit à cette session !");
         }
-        return inscriptionRepository.save(inscription);
+        
+        Inscription saved = inscriptionRepository.save(inscription);
+        
+        // Créer une notification pour l'admin
+        try {
+            String userName = "N/A";
+            String trainingTitle = "N/A";
+            
+            // Récupérer le nom de l'utilisateur
+            Optional<User> userOpt = userRepository.findById(inscription.getUserId());
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
+                          (user.getNom() != null ? user.getNom() : "");
+                userName = userName.trim();
+                if (userName.isEmpty() && inscription.getParticipant() != null) {
+                    userName = (inscription.getParticipant().getPrenom() != null ? inscription.getParticipant().getPrenom() : "") + " " +
+                              (inscription.getParticipant().getNom() != null ? inscription.getParticipant().getNom() : "");
+                    userName = userName.trim();
+                }
+            } else if (inscription.getParticipant() != null) {
+                userName = (inscription.getParticipant().getPrenom() != null ? inscription.getParticipant().getPrenom() : "") + " " +
+                          (inscription.getParticipant().getNom() != null ? inscription.getParticipant().getNom() : "");
+                userName = userName.trim();
+            }
+            
+            // Récupérer le titre de la formation
+            Optional<SessionFormation> sessionOpt = sessionRepository.findById(inscription.getSessionId());
+            if (sessionOpt.isPresent()) {
+                SessionFormation session = sessionOpt.get();
+                if (session.getTitle() != null) {
+                    trainingTitle = session.getTitle();
+                }
+            }
+            
+            // Créer la notification
+            Notification notification = new Notification(
+                "Nouvel inscrit : " + userName + " à la formation " + trainingTitle,
+                "INFO"
+            );
+            notificationRepository.save(notification);
+        } catch (Exception e) {
+            // Ne pas faire échouer l'inscription si la notification échoue
+            e.printStackTrace();
+        }
+        
+        return saved;
     }
 
     // 2. VOIR MES INSCRIPTIONS (GET)

@@ -1,0 +1,453 @@
+.admin-attestations-page {
+  min-height: 100vh;
+  background-color: var(--admin-light-bg);
+  padding: 24px 0;
+}
+
+/* =========================================
+   EN-TÊTE
+   ========================================= */
+.attestations-header {
+  margin-bottom: 32px;
+}
+
+.admin-page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manage-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 12px;
+  background-color: var(--admin-primary-blue);
+  color: white;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-page-subtitle {
+  font-size: 0.95rem;
+  color: var(--admin-text-muted);
+  margin: 0;
+}
+
+/* =========================================
+   SECTION PRINCIPALE
+   ========================================= */
+.attestations-main-section {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+}
+
+/* =========================================
+   SECTION GAUCHE : LISTE
+   ========================================= */
+.attestations-list-section {
+  flex: 1;
+}
+
+.attestations-list-card {
+  background-color: var(--admin-white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.attestations-list-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.admin-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin: 0 0 4px 0;
+}
+
+.admin-section-subtitle {
+  font-size: 0.9rem;
+  color: var(--admin-text-muted);
+  margin: 0;
+}
+
+.attestations-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--admin-light-bg);
+  border: 1px solid var(--admin-border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 300px;
+}
+
+.search-icon {
+  color: var(--admin-text-muted);
+  flex-shrink: 0;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--admin-text-dark);
+}
+
+.search-input::placeholder {
+  color: var(--admin-text-muted);
+}
+
+.attestations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.attestation-item {
+  display: grid;
+  grid-template-columns: 2fr 2fr 100px 150px 160px;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background-color: var(--admin-light-bg);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.attestation-item:hover {
+  background-color: #f0f0f0;
+}
+
+.attestation-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.attestation-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--admin-primary-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.attestation-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.attestation-name {
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.attestation-email {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+}
+
+.attestation-training {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attestation-training-title {
+  font-weight: 500;
+  color: var(--admin-text-dark);
+  font-size: 0.95rem;
+}
+
+.attestation-session {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+}
+
+.attestation-presence {
+  display: flex;
+  justify-content: center;
+}
+
+.presence-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.attestation-id {
+  display: flex;
+  justify-content: center;
+}
+
+.id-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: var(--admin-light-bg);
+  color: var(--admin-text-muted);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  font-weight: 500;
+}
+
+.attestation-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.generate-pdf-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: var(--admin-primary-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.generate-pdf-btn:hover {
+  background-color: #0a1f3d;
+}
+
+/* =========================================
+   SECTION DROITE : STATISTIQUES
+   ========================================= */
+.attestations-stats-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.attestations-stats-card {
+  background-color: var(--admin-white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 24px;
+}
+
+.stats-total {
+  text-align: center;
+  padding: 32px 0;
+  margin: 24px 0;
+  border-bottom: 1px solid var(--admin-border-color);
+}
+
+.stats-total-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.stats-total-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--admin-primary-blue);
+  margin-bottom: 8px;
+}
+
+.stats-total-label {
+  font-size: 1rem;
+  color: var(--admin-text-muted);
+  font-weight: 500;
+}
+
+.stats-quarter-section {
+  margin-top: 24px;
+}
+
+.stats-quarter-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin-bottom: 16px;
+}
+
+.stats-quarter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stats-quarter-item {
+  display: grid;
+  grid-template-columns: 60px 1fr 40px;
+  gap: 12px;
+  align-items: center;
+}
+
+.quarter-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--admin-text-dark);
+}
+
+.quarter-bar {
+  height: 24px;
+  background-color: var(--admin-light-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.quarter-bar-fill {
+  height: 100%;
+  background-color: var(--admin-primary-blue);
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.quarter-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  text-align: right;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 24px;
+  background-color: var(--admin-text-dark);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.export-btn:hover {
+  background-color: #1a1a1a;
+}
+
+/* =========================================
+   ÉTAT VIDE
+   ========================================= */
+.admin-empty-state {
+  text-align: center;
+  padding: 80px 24px;
+}
+
+.admin-empty-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  opacity: 0.4;
+}
+
+.admin-empty-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--admin-text-dark);
+  margin: 0 0 12px 0;
+}
+
+.admin-empty-hint {
+  font-size: 0.95rem;
+  color: var(--admin-text-muted);
+  margin: 8px 0;
+}
+
+/* =========================================
+   LOADING & ERROR
+   ========================================= */
+.admin-loading,
+.admin-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--admin-text-muted);
+}
+
+.admin-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--admin-border-color);
+  border-top-color: var(--admin-primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.admin-error {
+  color: #ef4444;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 1200px) {
+  .attestations-main-section {
+    grid-template-columns: 1fr;
+  }
+
+  .attestations-stats-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .attestation-item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .attestations-list-header {
+    flex-direction: column;
+  }
+
+  .attestations-search-box {
+    width: 100%;
+    min-width: auto;
+  }
+}
+

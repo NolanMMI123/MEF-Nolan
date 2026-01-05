@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import Toast from '../components/Toast';
 import { FaEye, FaFileAlt, FaPlus } from 'react-icons/fa';
-import { X, Calendar } from 'lucide-react';
+import { X, Calendar, Edit, Trash2 } from 'lucide-react';
 import './ManageSessions.css';
 
 /**
@@ -24,7 +24,9 @@ const ManageSessions = () => {
     placesTotales: 15,
     placesReservees: 0
   });
+  const [editingSessionId, setEditingSessionId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
     fetchSessions();
@@ -95,8 +97,9 @@ const ManageSessions = () => {
     return { label: 'Vide', class: 'empty' };
   };
 
-  // Gérer l'ouverture du modal
+  // Gérer l'ouverture du modal (création)
   const handleOpenModal = () => {
+    setEditingSessionId(null);
     setFormData({
       title: '',
       dates: '',
@@ -107,9 +110,23 @@ const ManageSessions = () => {
     setShowModal(true);
   };
 
+  // Gérer l'ouverture du modal (modification)
+  const handleEditSession = (session) => {
+    setEditingSessionId(session.id);
+    setFormData({
+      title: session.title || '',
+      dates: session.dates || '',
+      lieu: session.lieu || session.location || '',
+      placesTotales: session.placesTotales || 15,
+      placesReservees: session.placesReservees || 0
+    });
+    setShowModal(true);
+  };
+
   // Gérer la fermeture du modal
   const handleCloseModal = () => {
     setShowModal(false);
+    setEditingSessionId(null);
     setFormData({
       title: '',
       dates: '',
@@ -140,8 +157,13 @@ const ManageSessions = () => {
 
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:8080/api/sessions', {
-        method: 'POST',
+      const url = editingSessionId 
+        ? `http://localhost:8080/api/sessions/${editingSessionId}`
+        : 'http://localhost:8080/api/sessions';
+      const method = editingSessionId ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -149,17 +171,54 @@ const ManageSessions = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la création de la session');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Erreur lors de la sauvegarde de la session');
       }
 
-      setToast({ message: 'Session créée avec succès !', type: 'success' });
+      setToast({ 
+        message: editingSessionId 
+          ? 'Session modifiée avec succès !' 
+          : 'Session créée avec succès !', 
+        type: 'success' 
+      });
       handleCloseModal();
       await fetchSessions(); // Rafraîchir la liste
     } catch (err) {
       console.error('Erreur:', err);
-      setToast({ message: err.message || 'Erreur lors de la création de la session', type: 'error' });
+      setToast({ message: err.message || 'Erreur lors de la sauvegarde de la session', type: 'error' });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Supprimer une session
+  const handleDeleteSession = async (id) => {
+    if (!deleteConfirm || deleteConfirm !== id) {
+      setDeleteConfirm(id);
+      setToast({ 
+        message: 'Cliquez à nouveau sur Supprimer pour confirmer', 
+        type: 'info' 
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/sessions/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Erreur lors de la suppression');
+      }
+
+      setToast({ message: 'Session supprimée avec succès !', type: 'success' });
+      setDeleteConfirm(null);
+      await fetchSessions(); // Rafraîchir la liste
+    } catch (err) {
+      console.error('Erreur:', err);
+      setToast({ message: err.message || 'Erreur lors de la suppression de la session', type: 'error' });
+      setDeleteConfirm(null);
     }
   };
 
@@ -239,14 +298,33 @@ const ManageSessions = () => {
                     </div>
                   </div>
                   <div className="session-actions">
-                    <button className="session-action-btn">
-                      <FaEye />
-                      Détails
+                    <button 
+                      className="session-action-btn edit"
+                      onClick={() => handleEditSession(session)}
+                      title="Modifier"
+                    >
+                      <Edit size={16} />
+                      Modifier
                     </button>
-                    <button className="session-action-btn">
-                      <FaFileAlt />
-                      Émargement
-                    </button>
+                    {deleteConfirm === session.id ? (
+                      <button 
+                        className="session-action-btn delete confirm"
+                        onClick={() => handleDeleteSession(session.id)}
+                        title="Confirmer la suppression"
+                      >
+                        <Trash2 size={16} />
+                        Confirmer
+                      </button>
+                    ) : (
+                      <button 
+                        className="session-action-btn delete"
+                        onClick={() => handleDeleteSession(session.id)}
+                        title="Supprimer"
+                      >
+                        <Trash2 size={16} />
+                        Supprimer
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -329,7 +407,10 @@ const ManageSessions = () => {
                   Annuler
                 </button>
                 <button type="submit" className="btn-submit" disabled={submitting}>
-                  {submitting ? 'Création...' : 'Créer la session'}
+                  {submitting 
+                    ? (editingSessionId ? 'Modification...' : 'Création...') 
+                    : (editingSessionId ? 'Modifier la session' : 'Créer la session')
+                  }
                 </button>
               </div>
             </form>
