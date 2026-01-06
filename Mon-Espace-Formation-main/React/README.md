@@ -85,13 +85,6 @@ npm run preview
 
 L'application front-end communique avec une **API REST Spring Boot** hébergée sur le backend.
 
-### URL de Base de l'API
-
-Par défaut, l'application est configurée pour communiquer avec :
-```
-http://localhost:8080/api
-```
-
 ### Endpoints Principaux
 
 - **Formations** : `GET /api/trainings`
@@ -109,90 +102,16 @@ Si votre backend est hébergé sur un autre port ou domaine, modifiez les URLs d
 
 ```
 React/
-├── public/                 # Assets statiques (images, modèles 3D)
-│   ├── adminlogo.png
-│   ├── vignette_MEF.png
-│   └── salle.glb          # Modèle 3D de la salle
+├── public/                # Modèles 3D (.glb) et logos
 ├── src/
-│   ├── components/        # Composants réutilisables
-│   │   ├── Header.jsx     # Navigation principale
-│   │   ├── Footer.jsx     # Pied de page
-│   │   ├── AdminLayout.jsx # Layout pour l'interface admin
-│   │   ├── Salle.jsx      # Composant 3D de la salle
-│   │   └── ...
-│   ├── pages/             # Pages de l'application
-│   │   ├── Home.jsx       # Page d'accueil
-│   │   ├── Catalogue.jsx  # Catalogue des formations
-│   │   ├── Dashboard.jsx  # Tableau de bord utilisateur
-│   │   ├── AdminDashboard.jsx # Tableau de bord admin
-│   │   ├── ManageTrainings.jsx # Gestion des formations
-│   │   ├── ManageSessions.jsx  # Gestion des sessions
-│   │   └── ...
-│   ├── utils/             # Utilitaires et helpers
-│   │   ├── theme.js       # Variables de thème
-│   │   └── data.jsx       # Données statiques
-│   ├── App.jsx            # Configuration des routes
-│   ├── main.jsx           # Point d'entrée
-│   └── index.css          # Styles globaux
-├── package.json
-└── vite.config.js         # Configuration Vite
-```
-
-## Fonctionnalités Clés
-
-### Interface Utilisateur
-
-- **Catalogue de formations dynamique** : Affichage des formations disponibles avec filtres et recherche
-- **Détails de formation** : Page détaillée avec description, prix, durée, sessions disponibles
-- **Inscription en temps réel** : Système d'inscription aux sessions de formation avec validation
-- **Tableau de bord utilisateur** : Suivi des inscriptions, formations suivies, attestations
-- **Salle 3D immersive** : Expérience interactive en 3D pour la présentation de la plateforme
-
-### Interface Administration
-
-- **Tableau de bord admin** : Vue d'ensemble avec statistiques et indicateurs clés
-- **Gestion des formations** : CRUD complet (Créer, Lire, Modifier, Supprimer)
-- **Gestion des sessions** : Création et modification des sessions de formation
-- **Gestion des formateurs** : Ajout et gestion des profils formateurs
-- **Gestion des inscriptions** : Validation, modification et suivi des inscriptions
-- **Gestion des attestations** : Génération et téléchargement de PDF
-- **Système de notifications** : Alertes en temps réel pour les nouveaux événements
-- **Paramètres de la plateforme** : Configuration générale de l'application
-
-### Authentification & Sécurité
-
-- **Connexion/Déconnexion** : Système d'authentification avec gestion des rôles
-- **Protection des routes** : Routes admin protégées (`AdminRoute.jsx`)
-- **Gestion des rôles** : Distinction entre utilisateurs standards (`ROLE_USER`) et administrateurs (`ROLE_ADMIN`)
-
-## Scripts Disponibles
-
-- `npm run dev` : Lance le serveur de développement Vite
-- `npm run build` : Compile l'application pour la production
-- `npm run preview` : Prévisualise le build de production
-- `npm run lint` : Exécute ESLint pour vérifier le code
-
-## Technologies & Concepts Utilisés
-
-- **Hooks React** : `useState`, `useEffect`, `useRef`, `useNavigate`, `useLocation`
-- **React Router** : Navigation et routage côté client
-- **Context API** : Gestion de l'état global (si applicable)
-- **LocalStorage** : Persistance de l'authentification et des préférences
-- **Responsive Design** : Interface adaptative pour mobile, tablette et desktop
-- **Polling** : Mise à jour périodique des notifications (toutes les 60 secondes)
-
-## Notes de Développement
-
-- Le projet utilise **Vite** comme build tool pour des performances optimales
-- Les styles sont organisés en fichiers CSS séparés par composant
-- Les appels API utilisent l'API `fetch` native de JavaScript
-- La scène 3D est rendue avec React Three Fiber pour une intégration React native
-
-## Support & Contribution
-
-Pour toute question ou contribution, veuillez consulter la documentation du projet ou contacter l'équipe de développement.
-
----
-
-**Version** : 1.0.0  
-**Dernière mise à jour** : 2024
+│   ├── components/        # Layouts, Header, Footer, Toasts
+│   ├── pages/             # Vues principales
+│   │   ├── Home.jsx       # Accueil public
+│   │   ├── Catalogue.jsx  # Liste des formations
+│   │   ├── Salle3D.jsx    # Expérience immersive
+│   │   └── Admin/         # Dashboard, Inscriptions, Sessions, Settings
+│   ├── services/          # Configuration Axios (api.js)
+│   ├── utils/             # Thèmes et données statiques
+│   ├── App.jsx            # Routage principal
+│   └── main.jsx           # Point d'entrée
+└── vite.config.js         # Configuration du Proxy API
