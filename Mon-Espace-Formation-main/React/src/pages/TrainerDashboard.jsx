@@ -96,6 +96,19 @@ const TrainerDashboard = () => {
             throw new Error('Erreur lors du chargement des données');
           }
           const data = await response.json();
+          // Log pour déboguer les inscrits
+          if (data.formations) {
+            console.log('📊 Formations chargées:', data.formations.length);
+            data.formations.forEach((formationWithInscrits, index) => {
+              const training = formationWithInscrits.training;
+              const inscrits = formationWithInscrits.inscrits || [];
+              console.log(`Formation ${index + 1} (${training?.title}):`, {
+                id: training?.id,
+                inscritsCount: inscrits.length,
+                inscrits: inscrits
+              });
+            });
+          }
           setDashboardData(data);
         }
       } catch (err) {
@@ -110,6 +123,12 @@ const TrainerDashboard = () => {
   }, [navigate, id]);
 
   const handleViewInscrits = (formation) => {
+    console.log('👁️ Affichage des inscrits pour la formation:', formation);
+    console.log('📋 Données de la formation:', {
+      training: formation.training,
+      inscrits: formation.inscrits,
+      nombreInscrits: formation.inscrits ? formation.inscrits.length : 0
+    });
     setSelectedFormation(formation);
     setShowInscritsModal(true);
   };
@@ -159,6 +178,20 @@ const TrainerDashboard = () => {
               : (Array.isArray(training.programme) ? training.programme : []))
           : [];
 
+        // S'assurer que objectifs et prerequis sont des tableaux
+        const objectifsArray = Array.isArray(training.objectifs) 
+          ? training.objectifs 
+          : (training.objectifs ? [training.objectifs] : []);
+        const prerequisArray = Array.isArray(training.prerequis) 
+          ? training.prerequis 
+          : (training.prerequis ? [training.prerequis] : []);
+
+        console.log('📋 Données de formation chargées pour édition:', {
+          objectifs: objectifsArray,
+          programme: programmeList,
+          prerequis: prerequisArray
+        });
+
         setFullTrainingFormData({
           title: training.title || '',
           duration: training.duration || '',
@@ -168,9 +201,9 @@ const TrainerDashboard = () => {
           endDate: convertToDateInput(training.endDate),
           status: training.status || 'A Venir',
           description: training.description || '',
-          objectifs: training.objectifs || [],
+          objectifs: objectifsArray,
           programme: programmeList,
-          prerequis: training.prerequis || []
+          prerequis: prerequisArray
         });
         // Réinitialiser les champs d'édition
         setEditingProgramme('');
@@ -351,6 +384,17 @@ const TrainerDashboard = () => {
       };
 
         // Préparer les données à envoyer - IMPORTANT : inclure explicitement tous les champs
+      // S'assurer que les listes sont bien des tableaux
+      const objectifsArray = Array.isArray(fullTrainingFormData.objectifs) 
+        ? fullTrainingFormData.objectifs.filter(obj => obj && obj.trim() !== '')
+        : [];
+      const prerequisArray = Array.isArray(fullTrainingFormData.prerequis) 
+        ? fullTrainingFormData.prerequis.filter(prereq => prereq && prereq.trim() !== '')
+        : [];
+      const programmeArray = Array.isArray(fullTrainingFormData.programme) 
+        ? fullTrainingFormData.programme.filter(prog => prog && prog.trim() !== '')
+        : [];
+      
       const trainingDataToSend = {
         title: fullTrainingFormData.title || '',
         duration: fullTrainingFormData.duration || '',
@@ -361,12 +405,12 @@ const TrainerDashboard = () => {
         status: fullTrainingFormData.status || 'A Venir',
         // Description et contenu pédagogique - CRUCIAL : s'assurer que ces champs sont bien inclus
         description: fullTrainingFormData.description || '',
-        objectifs: Array.isArray(fullTrainingFormData.objectifs) ? fullTrainingFormData.objectifs : [],
+        objectifs: objectifsArray,
         // Convertir la liste programme en String (jointure avec \n) pour le backend
-        programme: Array.isArray(fullTrainingFormData.programme) 
-          ? fullTrainingFormData.programme.join('\n') 
-          : (fullTrainingFormData.programme || ''),
-        prerequis: Array.isArray(fullTrainingFormData.prerequis) ? fullTrainingFormData.prerequis : [],
+        programme: programmeArray.length > 0 
+          ? programmeArray.join('\n') 
+          : '',
+        prerequis: prerequisArray,
         // Informations du formateur
         trainerId: user.id,
         trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim() || user.email,
@@ -374,6 +418,11 @@ const TrainerDashboard = () => {
       };
 
       console.log('📤 Données envoyées au backend:', JSON.stringify(trainingDataToSend, null, 2));
+      console.log('📋 État complet de fullTrainingFormData avant envoi:', {
+        objectifs: fullTrainingFormData.objectifs,
+        programme: fullTrainingFormData.programme,
+        prerequis: fullTrainingFormData.prerequis
+      });
 
       const url = trainingData?.id 
         ? `http://localhost:8080/api/trainings/${trainingData.id}`
@@ -439,11 +488,28 @@ const TrainerDashboard = () => {
       setShowEditModal(false);
       setTrainingData(null);
       
+      // Réinitialiser les champs d'édition
+      setEditingObjective('');
+      setEditingProgramme('');
+      setEditingPrerequis('');
+      
       // Recharger les données
       const userEmail = localStorage.getItem('userEmail');
       const dashboardResponse = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
       if (dashboardResponse.ok) {
         const data = await dashboardResponse.json();
+        console.log('✅ Dashboard rechargé après sauvegarde');
+        if (data.formations) {
+          // Vérifier que les données pédagogiques sont bien présentes
+          data.formations.forEach((formationWithInscrits) => {
+            const training = formationWithInscrits.training;
+            console.log(`📋 Formation rechargée (${training?.title}):`, {
+              objectifs: training?.objectifs,
+              prerequis: training?.prerequis,
+              programme: training?.programme
+            });
+          });
+        }
         setDashboardData(data);
       }
     } catch (err) {
@@ -1107,11 +1173,29 @@ const TrainerDashboard = () => {
                     }}
                   />
                   <button 
+                    type="button"
                     className="trainer-btn trainer-btn-primary"
-                    onClick={() => {
-                      if (editingObjective.trim()) {
-                        setFullTrainingFormData(prev => ({ ...prev, objectifs: [...prev.objectifs, editingObjective.trim()] }));
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const trimmedValue = editingObjective.trim();
+                      console.log('🔘 Bouton Ajouter objectif cliqué');
+                      console.log('📝 Valeur editingObjective:', editingObjective);
+                      console.log('📝 Valeur trimmed:', trimmedValue);
+                      console.log('📋 fullTrainingFormData.objectifs avant:', fullTrainingFormData.objectifs);
+                      
+                      if (trimmedValue) {
+                        setFullTrainingFormData(prev => {
+                          const newObjectifs = Array.isArray(prev.objectifs) 
+                            ? [...prev.objectifs, trimmedValue]
+                            : [trimmedValue];
+                          console.log('✅ Nouveaux objectifs:', newObjectifs);
+                          return { ...prev, objectifs: newObjectifs };
+                        });
                         setEditingObjective('');
+                      } else {
+                        console.warn('⚠️ editingObjective est vide ou ne contient que des espaces');
+                        setToast({ message: 'Veuillez saisir un objectif avant de cliquer sur Ajouter', type: 'warning' });
                       }
                     }}
                   >
@@ -1165,11 +1249,29 @@ const TrainerDashboard = () => {
                     }}
                   />
                   <button 
+                    type="button"
                     className="trainer-btn trainer-btn-primary"
-                    onClick={() => {
-                      if (editingProgramme.trim()) {
-                        setFullTrainingFormData(prev => ({ ...prev, programme: [...prev.programme, editingProgramme.trim()] }));
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const trimmedValue = editingProgramme.trim();
+                      console.log('🔘 Bouton Ajouter programme cliqué');
+                      console.log('📝 Valeur editingProgramme:', editingProgramme);
+                      console.log('📝 Valeur trimmed:', trimmedValue);
+                      console.log('📋 fullTrainingFormData.programme avant:', fullTrainingFormData.programme);
+                      
+                      if (trimmedValue) {
+                        setFullTrainingFormData(prev => {
+                          const newProgramme = Array.isArray(prev.programme) 
+                            ? [...prev.programme, trimmedValue]
+                            : [trimmedValue];
+                          console.log('✅ Nouveau programme:', newProgramme);
+                          return { ...prev, programme: newProgramme };
+                        });
                         setEditingProgramme('');
+                      } else {
+                        console.warn('⚠️ editingProgramme est vide ou ne contient que des espaces');
+                        setToast({ message: 'Veuillez saisir un module avant de cliquer sur Ajouter', type: 'warning' });
                       }
                     }}
                   >
@@ -1223,11 +1325,29 @@ const TrainerDashboard = () => {
                     }}
                   />
                   <button 
+                    type="button"
                     className="trainer-btn trainer-btn-primary"
-                    onClick={() => {
-                      if (editingPrerequis.trim()) {
-                        setFullTrainingFormData(prev => ({ ...prev, prerequis: [...prev.prerequis, editingPrerequis.trim()] }));
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const trimmedValue = editingPrerequis.trim();
+                      console.log('🔘 Bouton Ajouter prérequis cliqué');
+                      console.log('📝 Valeur editingPrerequis:', editingPrerequis);
+                      console.log('📝 Valeur trimmed:', trimmedValue);
+                      console.log('📋 fullTrainingFormData.prerequis avant:', fullTrainingFormData.prerequis);
+                      
+                      if (trimmedValue) {
+                        setFullTrainingFormData(prev => {
+                          const newPrerequis = Array.isArray(prev.prerequis) 
+                            ? [...prev.prerequis, trimmedValue]
+                            : [trimmedValue];
+                          console.log('✅ Nouveaux prérequis:', newPrerequis);
+                          return { ...prev, prerequis: newPrerequis };
+                        });
                         setEditingPrerequis('');
+                      } else {
+                        console.warn('⚠️ editingPrerequis est vide ou ne contient que des espaces');
+                        setToast({ message: 'Veuillez saisir un prérequis avant de cliquer sur Ajouter', type: 'warning' });
                       }
                     }}
                   >
