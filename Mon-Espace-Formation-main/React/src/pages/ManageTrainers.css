@@ -123,6 +123,48 @@
   border-top: 1px solid var(--admin-border-color);
 }
 
+.trainer-contract-info {
+  width: 100%;
+  padding: 12px 0;
+  border-top: 1px solid var(--admin-border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trainer-contract-badge-card,
+.trainer-tarif-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.trainer-contract-label,
+.trainer-tarif-label {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+  font-weight: 500;
+}
+
+.trainer-contract-badge-value {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trainer-tarif-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--admin-primary-blue);
+}
+
 .trainer-email {
   font-size: 0.9rem;
   color: var(--admin-text-dark);

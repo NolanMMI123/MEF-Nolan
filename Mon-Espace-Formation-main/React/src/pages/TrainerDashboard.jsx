@@ -628,6 +628,27 @@ const TrainerDashboard = () => {
             <div className="trainer-header-info">
               <h1>Mon Espace Formateur</h1>
               <p>Bienvenue, {trainerName}</p>
+              {trainer?.typeContrat && (
+                <div className="trainer-contract-badge" style={{ marginTop: '8px' }}>
+                  <span 
+                    className="trainer-contract-badge-text"
+                    style={{ 
+                      backgroundColor: 
+                        trainer.typeContrat === 'Freelance' ? '#4285F4' :
+                        trainer.typeContrat === 'CDD' ? '#34A853' :
+                        trainer.typeContrat === 'Vacataire' ? '#FFC107' : '#6c757d',
+                      color: trainer.typeContrat === 'Vacataire' ? '#212529' : 'white'
+                    }}
+                  >
+                    {trainer.typeContrat}
+                  </span>
+                  {trainer?.tarif && (
+                    <span className="trainer-tarif-badge">
+                      {trainer.tarif}€/h
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="trainer-header-right">

@@ -331,6 +331,38 @@ const ManageTrainers = () => {
                 <div className="trainer-contact">
                   <div className="trainer-email">📧 {trainer.email || 'N/A'}</div>
                 </div>
+                <div className="trainer-contract-info">
+                  {trainer.typeContrat ? (
+                    <div className="trainer-contract-badge-card">
+                      <span className="trainer-contract-label">Type de contrat:</span>
+                      <span 
+                        className="trainer-contract-badge-value"
+                        style={{
+                          backgroundColor: 
+                            trainer.typeContrat === 'Freelance' ? '#4285F4' :
+                            trainer.typeContrat === 'CDD' ? '#34A853' :
+                            trainer.typeContrat === 'Vacataire' ? '#FFC107' : '#6c757d',
+                          color: trainer.typeContrat === 'Vacataire' ? '#212529' : 'white'
+                        }}
+                      >
+                        {trainer.typeContrat}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="trainer-contract-badge-card">
+                      <span className="trainer-contract-label">Type de contrat:</span>
+                      <span className="trainer-contract-badge-value" style={{ backgroundColor: '#6c757d', color: 'white' }}>
+                        Non défini
+                      </span>
+                    </div>
+                  )}
+                  {trainer.tarif && (
+                    <div className="trainer-tarif-card">
+                      <span className="trainer-tarif-label">Tarif:</span>
+                      <span className="trainer-tarif-value">{trainer.tarif}€/h</span>
+                    </div>
+                  )}
+                </div>
                 <div className="trainer-actions">
                   <button 
                     className="trainer-action-btn"
@@ -344,20 +376,6 @@ const ManageTrainers = () => {
                     Planning
                   </button>
                 </div>
-                {(trainer.typeContrat || trainer.tarif) && (
-                  <div className="trainer-contract-info">
-                    {trainer.typeContrat && (
-                      <div className="trainer-contract-type">
-                        Contrat: {trainer.typeContrat}
-                      </div>
-                    )}
-                    {trainer.tarif && (
-                      <div className="trainer-tarif">
-                        Tarif: {trainer.tarif}€
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             ))}
           </div>
