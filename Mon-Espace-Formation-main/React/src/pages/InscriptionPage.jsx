@@ -169,12 +169,25 @@ const InscriptionPage = () => {
             });
 
         } else {
-            const msg = await response.text();
-            alert("❌ Erreur serveur : " + msg);
+            let errorMessage = "Erreur serveur";
+            try {
+                const errorText = await response.text();
+                // Essayer de parser le JSON si c'est un objet d'erreur
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    errorMessage = errorJson.message || errorJson.error || errorText;
+                } catch {
+                    // Si ce n'est pas du JSON, utiliser le texte tel quel
+                    errorMessage = errorText || `Erreur ${response.status}: ${response.statusText}`;
+                }
+            } catch (e) {
+                errorMessage = `Erreur ${response.status}: ${response.statusText}`;
+            }
+            alert("❌ Erreur : " + errorMessage);
         }
     } catch (error) {
         console.error("Erreur connexion:", error);
-        alert("❌ Erreur de connexion au serveur.");
+        alert("❌ Erreur de connexion au serveur : " + error.message);
     }
   };
 
