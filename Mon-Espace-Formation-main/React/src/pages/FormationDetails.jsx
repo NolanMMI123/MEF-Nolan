@@ -20,18 +20,26 @@ const FormationDetails = () => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                // 1. Tenter de récupérer depuis l'API Back-end
-                const response = await fetch(`http://localhost:8080/api/sessions/${id}`);
+                // 1. Tenter de récupérer depuis l'API Back-end (trainings au lieu de sessions)
+                const response = await fetch(`http://localhost:8080/api/trainings/${id}`);
                 
                 if (response.ok) {
                     const data = await response.json();
                     console.log("Détails reçus du Back-end :", data);
                     setCourse(data);
                 } else {
-                    // Fallback sur les données statiques si l'API échoue ou ID introuvable
-                    console.warn("API erreur, recherche locale...");
-                    const localCourse = catalogueData.find(c => String(c.id) === String(id));
-                    setCourse(localCourse);
+                    // Fallback : essayer avec sessions si trainings échoue
+                    const sessionResponse = await fetch(`http://localhost:8080/api/sessions/${id}`);
+                    if (sessionResponse.ok) {
+                        const sessionData = await sessionResponse.json();
+                        console.log("Détails reçus depuis sessions :", sessionData);
+                        setCourse(sessionData);
+                    } else {
+                        // Fallback sur les données statiques si l'API échoue ou ID introuvable
+                        console.warn("API erreur, recherche locale...");
+                        const localCourse = catalogueData.find(c => String(c.id) === String(id));
+                        setCourse(localCourse);
+                    }
                 }
             } catch (error) {
                 console.error("Erreur connexion API :", error);
@@ -165,8 +173,11 @@ const FormationDetails = () => {
                                         <p className="text-muted mb-4">Ce que vous serez capable de faire à l'issue de cette formation</p>
 
                                         <div className="d-flex flex-column gap-3 mb-5">
-                                            {/* Si les objectifs ne viennent pas de l'API, on met du texte générique */}
-                                            {(course.objectives || ["Maîtriser les concepts clés", "Mettre en pratique via des ateliers", "Réussir la certification finale"]).map((obj, idx) => (
+                                            {/* Utiliser objectifs (français) au lieu de objectives (anglais) */}
+                                            {(course.objectifs && course.objectifs.length > 0 
+                                              ? course.objectifs 
+                                              : (course.objectives || ["Maîtriser les concepts clés", "Mettre en pratique via des ateliers", "Réussir la certification finale"])
+                                            ).map((obj, idx) => (
                                                 <div key={idx} className="d-flex gap-3 align-items-start">
                                                     <FaCheckCircle className="text-success mt-1 flex-shrink-0" />
                                                     <span>{obj}</span>
@@ -197,7 +208,14 @@ const FormationDetails = () => {
                                             <p className="text-muted small">Modules pour une maîtrise complète du sujet</p>
                                         </div>
 
-                                        {course.program ? (
+                                        {/* Afficher le programme depuis course.programme (String) ou course.program (liste) */}
+                                        {course.programme ? (
+                                            <div className="border rounded p-4" style={{ backgroundColor: '#f8f9fa' }}>
+                                                <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 }}>
+                                                    {course.programme}
+                                                </pre>
+                                            </div>
+                                        ) : course.program ? (
                                             <div className="d-flex flex-column gap-4">
                                                 {course.program.map((module, idx) => (
                                                     <div key={idx} className="border-start border-4 ps-4 position-relative" style={{ borderColor: theme.colors.primary }}>
@@ -244,7 +262,11 @@ const FormationDetails = () => {
                                         <p className="text-muted mb-4">Compétences nécessaires pour suivre cette formation</p>
 
                                         <div className="d-flex flex-column gap-3 mb-5">
-                                            {(course.prerequisites || ["Aisance avec l'outil informatique", "Motivation d'apprendre"]).map((req, idx) => (
+                                            {/* Utiliser prerequis (français) au lieu de prerequisites (anglais) */}
+                                            {(course.prerequis && course.prerequis.length > 0
+                                              ? course.prerequis
+                                              : (course.prerequisites || ["Aisance avec l'outil informatique", "Motivation d'apprendre"])
+                                            ).map((req, idx) => (
                                                 <div key={idx} className="d-flex gap-3 align-items-center text-muted">
                                                     <span className="fw-bold text-muted border rounded-circle d-flex align-items-center justify-content-center" style={{ width: '24px', height: '24px', fontSize: '12px' }}>{idx + 1}</span>
                                                     <span>{req}</span>

@@ -35,11 +35,12 @@ const TrainerDashboard = () => {
     status: 'A Venir',
     description: '',  // Description générale
     objectifs: [],
-    prerequis: [],
-    programme: ''
+    programme: [], // Transformé en liste pour cohérence
+    prerequis: []
   });
   const [editingObjective, setEditingObjective] = useState('');
   const [editingPrerequis, setEditingPrerequis] = useState('');
+  const [editingProgramme, setEditingProgramme] = useState(''); // Pour le programme
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [showSessionModal, setShowSessionModal] = useState(false);
@@ -161,9 +162,12 @@ const TrainerDashboard = () => {
           status: training.status || 'A Venir',
           description: training.description || '',
           objectifs: training.objectifs || [],
-          prerequis: training.prerequis || [],
-          programme: training.programme || ''
+          // Convertir le programme String en liste si nécessaire
+          programme: training.programme ? (typeof training.programme === 'string' ? training.programme.split('\n').filter(line => line.trim() !== '') : training.programme) : [],
+          prerequis: training.prerequis || []
         });
+        // Initialiser les champs d'édition
+        setEditingProgramme('');
         setShowEditModal(true);
       })
       .catch(err => {
@@ -185,12 +189,13 @@ const TrainerDashboard = () => {
       status: 'A Venir',
       description: '', // Description vide pour commencer
       objectifs: [], // Liste vide pour commencer
-      prerequis: [], // Liste vide pour commencer
-      programme: '' // Programme vide pour commencer
+      programme: [], // Liste vide pour commencer
+      prerequis: [] // Liste vide pour commencer
     });
     // Réinitialiser aussi les champs d'édition
     setEditingObjective('');
     setEditingPrerequis('');
+    setEditingProgramme('');
     setTrainingData({ trainerId: user.id, trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim(), trainerEmail: user.email });
     setShowCreateModal(true);
   };
@@ -351,8 +356,11 @@ const TrainerDashboard = () => {
         // Description et contenu pédagogique - CRUCIAL : s'assurer que ces champs sont bien inclus
         description: fullTrainingFormData.description || '',
         objectifs: Array.isArray(fullTrainingFormData.objectifs) ? fullTrainingFormData.objectifs : [],
+        // Convertir la liste programme en String (jointure avec \n)
+        programme: Array.isArray(fullTrainingFormData.programme) 
+          ? fullTrainingFormData.programme.join('\n') 
+          : (fullTrainingFormData.programme || ''),
         prerequis: Array.isArray(fullTrainingFormData.prerequis) ? fullTrainingFormData.prerequis : [],
-        programme: fullTrainingFormData.programme || '',
         // Informations du formateur
         trainerId: user.id,
         trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim() || user.email,
@@ -419,12 +427,31 @@ const TrainerDashboard = () => {
       setShowEditModal(false);
       setTrainingData(null);
       
-      // Recharger les données
+      // Réinitialiser le formulaire
+      setFullTrainingFormData({
+        title: '',
+        duration: '',
+        location: '',
+        price: '',
+        startDate: '',
+        endDate: '',
+        status: 'A Venir',
+        description: '',
+        objectifs: [],
+        programme: [],
+        prerequis: []
+      });
+      setEditingObjective('');
+      setEditingPrerequis('');
+      setEditingProgramme('');
+      
+      // Recharger les données du dashboard
       const userEmail = localStorage.getItem('userEmail');
       const dashboardResponse = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
       if (dashboardResponse.ok) {
         const data = await dashboardResponse.json();
         setDashboardData(data);
+        console.log('✅ Dashboard rechargé avec les nouvelles données');
       }
     } catch (err) {
       console.error('Erreur:', err);
@@ -1042,6 +1069,7 @@ const TrainerDashboard = () => {
                 <p className="trainer-form-hint">Description générale de la formation (visible dans le catalogue)</p>
               </div>
 
+              {/* 1. OBJECTIFS */}
               <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Objectifs pédagogiques</h3>
               <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
                 Définissez les objectifs d'apprentissage que les participants atteindront à la fin de la formation
@@ -1075,7 +1103,15 @@ const TrainerDashboard = () => {
                     onChange={(e) => setEditingObjective(e.target.value)}
                     placeholder="Ajouter un objectif"
                     className="trainer-input"
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), setFullTrainingFormData(prev => ({ ...prev, objectifs: [...prev.objectifs, editingObjective.trim()] })), setEditingObjective(''))}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (editingObjective.trim()) {
+                          setFullTrainingFormData(prev => ({ ...prev, objectifs: [...prev.objectifs, editingObjective.trim()] }));
+                          setEditingObjective('');
+                        }
+                      }
+                    }}
                   />
                   <button 
                     className="trainer-btn trainer-btn-primary"
@@ -1091,6 +1127,65 @@ const TrainerDashboard = () => {
                 </div>
               </div>
 
+              {/* 2. PROGRAMME */}
+              <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Programme détaillé</h3>
+              <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
+                Décrivez le programme complet de la formation, module par module si nécessaire
+              </p>
+              <div className="trainer-form-group">
+                {fullTrainingFormData.programme.length === 0 && (
+                  <p className="trainer-form-hint" style={{ fontStyle: 'italic', color: '#999', marginBottom: '12px' }}>
+                    Aucun élément de programme ajouté. Cliquez sur "Ajouter" après avoir saisi un élément.
+                  </p>
+                )}
+                <div className="trainer-prerequis-list">
+                  {fullTrainingFormData.programme.map((prog, index) => (
+                    <div key={index} className="trainer-list-item">
+                      <span>{prog}</span>
+                      <button 
+                        className="trainer-remove-btn"
+                        onClick={() => setFullTrainingFormData(prev => ({
+                          ...prev,
+                          programme: prev.programme.filter((_, i) => i !== index)
+                        }))}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="trainer-add-input">
+                  <input
+                    type="text"
+                    value={editingProgramme}
+                    onChange={(e) => setEditingProgramme(e.target.value)}
+                    placeholder="Ajouter un élément de programme (ex: Module 1 : Introduction - 2h)"
+                    className="trainer-input"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (editingProgramme.trim()) {
+                          setFullTrainingFormData(prev => ({ ...prev, programme: [...prev.programme, editingProgramme.trim()] }));
+                          setEditingProgramme('');
+                        }
+                      }
+                    }}
+                  />
+                  <button 
+                    className="trainer-btn trainer-btn-primary"
+                    onClick={() => {
+                      if (editingProgramme.trim()) {
+                        setFullTrainingFormData(prev => ({ ...prev, programme: [...prev.programme, editingProgramme.trim()] }));
+                        setEditingProgramme('');
+                      }
+                    }}
+                  >
+                    Ajouter
+                  </button>
+                </div>
+              </div>
+
+              {/* 3. PRÉREQUIS */}
               <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Prérequis</h3>
               <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
                 Liste les compétences ou connaissances nécessaires pour suivre cette formation
@@ -1124,7 +1219,15 @@ const TrainerDashboard = () => {
                     onChange={(e) => setEditingPrerequis(e.target.value)}
                     placeholder="Ajouter un prérequis"
                     className="trainer-input"
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), setFullTrainingFormData(prev => ({ ...prev, prerequis: [...prev.prerequis, editingPrerequis.trim()] })), setEditingPrerequis(''))}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (editingPrerequis.trim()) {
+                          setFullTrainingFormData(prev => ({ ...prev, prerequis: [...prev.prerequis, editingPrerequis.trim()] }));
+                          setEditingPrerequis('');
+                        }
+                      }
+                    }}
                   />
                   <button 
                     className="trainer-btn trainer-btn-primary"
@@ -1138,20 +1241,6 @@ const TrainerDashboard = () => {
                     Ajouter
                   </button>
                 </div>
-              </div>
-
-              <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Programme détaillé</h3>
-              <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
-                Décrivez le programme complet de la formation, module par module si nécessaire
-              </p>
-              <div className="trainer-form-group">
-                <textarea
-                  value={fullTrainingFormData.programme || ''}
-                  onChange={(e) => setFullTrainingFormData(prev => ({ ...prev, programme: e.target.value }))}
-                  placeholder="Exemple :\n\nModule 1 : Introduction (2h)\n- Présentation des concepts\n- Installation des outils\n\nModule 2 : Bases (4h)\n- Syntaxe de base\n- Premiers exercices..."
-                  className="trainer-textarea"
-                  rows={8}
-                />
               </div>
             </div>
 
