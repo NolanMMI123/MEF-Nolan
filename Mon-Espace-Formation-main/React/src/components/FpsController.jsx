@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { PointerLockControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";

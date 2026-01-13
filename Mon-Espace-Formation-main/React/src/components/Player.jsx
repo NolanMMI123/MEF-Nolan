@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";

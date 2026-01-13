@@ -18,17 +18,21 @@ const InscriptionPage = () => {
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
-      typeInscription: 'individuel',
-      nom: '',
-      prenom: '',
-      email: '',
-      telephone: '',
-      adresse: '',
-      cp: '',
-      ville: '',
-      entreprise: '', 
-      poste: ''
+  const [formData, setFormData] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    const currentUser = storedUser ? JSON.parse(storedUser) : {};
+    return {
+        typeInscription: 'individuel',
+        nom: currentUser.nom || '',
+        prenom: currentUser.prenom || '',
+        email: currentUser.email || '',
+        telephone: '',
+        adresse: '',
+        cp: '',
+        ville: '',
+        entreprise: '', 
+        poste: ''
+    };
   });
 
   useEffect(() => {
@@ -39,15 +43,6 @@ const InscriptionPage = () => {
         return;
     }
 
-    const currentUser = JSON.parse(storedUser);
-    setFormData(prev => ({
-        ...prev,
-        nom: currentUser.nom || '',
-        prenom: currentUser.prenom || '',
-        email: currentUser.email || ''
-    }));
-
-    setIsLoading(true);
     fetch('http://localhost:8080/api/sessions')
         .then(res => res.json())
         .then(data => {

@@ -6,7 +6,7 @@ import {
     FaCalendarAlt, FaMapMarkerAlt, FaChalkboardTeacher,
     FaExclamationTriangle, FaArrowLeft
 } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { theme } from '../utils/theme';
 import { catalogueData } from '../utils/data';
 

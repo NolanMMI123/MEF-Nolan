@@ -5,8 +5,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, User, Shield } from 'lucide-react';
 
 const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userRole, setUserRole] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('userEmail'));
+    const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole'));
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -14,9 +14,12 @@ const Header = () => {
     useEffect(() => {
         const userEmail = localStorage.getItem('userEmail');
         const role = localStorage.getItem('userRole');
-        setIsLoggedIn(!!userEmail); // Devient "true" si l'email existe, "false" sinon
-        setUserRole(role); // Stocke le rôle de l'utilisateur
-    }, [location]);
+        const newLoggedIn = !!userEmail;
+        
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (isLoggedIn !== newLoggedIn) setIsLoggedIn(newLoggedIn);
+        if (userRole !== role) setUserRole(role);
+    }, [location, isLoggedIn, userRole]);
 
     const handleLogout = () => {
         localStorage.removeItem('userEmail'); // On supprime la session

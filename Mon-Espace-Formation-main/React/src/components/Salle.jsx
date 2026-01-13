@@ -1,6 +1,7 @@
 // Salle.jsx
+/* eslint-disable react-hooks/immutability */
 import { useGLTF, useAnimations } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
@@ -70,8 +71,6 @@ export default function Salle({ on, laptopToPlay }) {
   const { scene, animations } = useGLTF("/salle.glb");
   const { actions } = useAnimations(animations, group);
 
-  const [switchLocked, setSwitchLocked] = useState(false);
-
   useEffect(() => {
     RectAreaLightUniformsLib.init();
   }, []);
@@ -111,7 +110,6 @@ export default function Salle({ on, laptopToPlay }) {
     a.setLoop(THREE.LoopOnce, 1);
     a.clampWhenFinished = true;
 
-    setSwitchLocked(true);
     a.stop();
     a.reset();
 
@@ -126,7 +124,7 @@ export default function Salle({ on, laptopToPlay }) {
     }
 
     const t = setTimeout(
-      () => setSwitchLocked(false),
+      () => {}, // Empty callback since switchLocked is removed
       a.getClip().duration * 1000
     );
     return () => clearTimeout(t);

@@ -12,7 +12,6 @@ import './ManageSessions.css';
 const ManageSessions = () => {
   const [sessions, setSessions] = useState([]);
   const [trainings, setTrainings] = useState([]);
-  const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -31,7 +30,6 @@ const ManageSessions = () => {
   useEffect(() => {
     fetchSessions();
     fetchTrainings();
-    fetchTrainers();
   }, []);
 
   const fetchSessions = async () => {
@@ -59,18 +57,6 @@ const ManageSessions = () => {
       }
     } catch (err) {
       console.error('Erreur lors du chargement des formations:', err);
-    }
-  };
-
-  const fetchTrainers = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/users?role=TRAINER');
-      if (response.ok) {
-        const data = await response.json();
-        setTrainers(data);
-      }
-    } catch (err) {
-      console.error('Erreur lors du chargement des formateurs:', err);
     }
   };
 

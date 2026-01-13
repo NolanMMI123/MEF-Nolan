@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FaBell, FaCog, FaSignOutAlt, FaChartBar, FaUsers, 
@@ -20,7 +20,7 @@ const AdminLayout = ({ children }) => {
   const notificationsRef = useRef(null);
 
   // Récupérer les notifications
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:8080/api/notifications');
       if (response.ok) {
@@ -33,10 +33,11 @@ const AdminLayout = ({ children }) => {
     } catch (err) {
       console.error('Erreur lors du chargement des notifications:', err);
     }
-  };
+  }, []);
 
   // Polling toutes les 60 secondes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchNotifications(); // Charger immédiatement
     
     const interval = setInterval(() => {
@@ -44,7 +45,7 @@ const AdminLayout = ({ children }) => {
     }, 60000); // 60 secondes
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNotifications]);
 
   // Fermer le dropdown si on clique en dehors
   useEffect(() => {
@@ -88,7 +89,7 @@ const AdminLayout = ({ children }) => {
       if (diffHours < 24) return `Il y a ${diffHours}h`;
       if (diffDays < 7) return `Il y a ${diffDays}j`;
       return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-    } catch (e) {
+    } catch {
       return 'N/A';
     }
   };

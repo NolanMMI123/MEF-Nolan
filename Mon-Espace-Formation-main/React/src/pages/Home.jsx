@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { FaBullseye, FaLightbulb, FaUsers, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { theme } from '../utils/theme';
 import { formationsData, featuresData } from '../utils/data';

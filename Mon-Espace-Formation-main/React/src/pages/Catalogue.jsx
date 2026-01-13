@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, InputGroup, Button, Card, Spinner } from 'react-bootstrap';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { FaSearch, FaClock, FaUser, FaArrowRight, FaFilter } from 'react-icons/fa';
 import { theme } from '../utils/theme';
 import { catalogueData } from '../utils/data';
