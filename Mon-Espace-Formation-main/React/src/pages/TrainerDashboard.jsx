@@ -564,14 +564,29 @@ const TrainerDashboard = () => {
   const { trainer, formations, stats } = dashboardData;
   const trainerName = trainer ? `${trainer.prenom || ''} ${trainer.nom || ''}`.trim() || trainer.email : 'Formateur';
 
+  // Générer les initiales pour l'avatar
+  const getInitials = (name) => {
+    if (!name) return 'F';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
     <div className="trainer-dashboard-wrapper">
-      {/* Header */}
+      {/* Header Moderne */}
       <header className="trainer-header">
         <div className="trainer-header-content">
           <div className="trainer-header-left">
-            <h1 className="trainer-title">Mon Espace Formateur</h1>
-            <p className="trainer-subtitle">Bienvenue, {trainerName}</p>
+            <div className="trainer-avatar-large">
+              {getInitials(trainerName)}
+            </div>
+            <div className="trainer-header-info">
+              <h1>Mon Espace Formateur</h1>
+              <p>Bienvenue, {trainerName}</p>
+            </div>
           </div>
           <div className="trainer-header-right">
             <button 
@@ -589,11 +604,13 @@ const TrainerDashboard = () => {
 
       {/* Main Content */}
       <main className="trainer-main">
-        {/* Statistiques */}
+        {/* Statistiques Modernes */}
         <div className="trainer-stats-grid">
           <div className="trainer-stat-card">
-            <div className="trainer-stat-icon" style={{ backgroundColor: '#e3f2fd' }}>
-              <BookOpen size={24} color="#1976d2" />
+            <div className="trainer-stat-header">
+              <div className="trainer-stat-icon primary">
+                <BookOpen size={28} color="white" />
+              </div>
             </div>
             <div className="trainer-stat-content">
               <div className="trainer-stat-value">{stats.nombreFormations}</div>
@@ -602,8 +619,10 @@ const TrainerDashboard = () => {
           </div>
 
           <div className="trainer-stat-card">
-            <div className="trainer-stat-icon" style={{ backgroundColor: '#f3e5f5' }}>
-              <Users size={24} color="#7b1fa2" />
+            <div className="trainer-stat-header">
+              <div className="trainer-stat-icon success">
+                <Users size={28} color="white" />
+              </div>
             </div>
             <div className="trainer-stat-content">
               <div className="trainer-stat-value">{stats.totalEleves}</div>
@@ -612,8 +631,10 @@ const TrainerDashboard = () => {
           </div>
 
           <div className="trainer-stat-card">
-            <div className="trainer-stat-icon" style={{ backgroundColor: '#fff3e0' }}>
-              <Clock size={24} color="#e65100" />
+            <div className="trainer-stat-header">
+              <div className="trainer-stat-icon warning">
+                <Clock size={28} color="white" />
+              </div>
             </div>
             <div className="trainer-stat-content">
               <div className="trainer-stat-value">{stats.heuresCoursPrevues}h</div>
@@ -622,8 +643,10 @@ const TrainerDashboard = () => {
           </div>
 
           <div className="trainer-stat-card">
-            <div className="trainer-stat-icon" style={{ backgroundColor: '#e8f5e9' }}>
-              <Euro size={24} color="#2e7d32" />
+            <div className="trainer-stat-header">
+              <div className="trainer-stat-icon info">
+                <Euro size={28} color="white" />
+              </div>
             </div>
             <div className="trainer-stat-content">
               <div className="trainer-stat-value">
@@ -636,14 +659,13 @@ const TrainerDashboard = () => {
 
         {/* Liste des formations */}
         <div className="trainer-formations-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 className="trainer-section-title" style={{ margin: 0 }}>Mes formations</h2>
+          <div className="trainer-section-header">
+            <h2 className="trainer-section-title">Mes formations</h2>
             <button
-              className="trainer-btn trainer-btn-primary"
+              className="trainer-create-btn"
               onClick={handleCreateFormation}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              <Plus size={16} /> Créer une formation
+              <Plus size={20} /> Créer une formation
             </button>
           </div>
           
@@ -657,56 +679,69 @@ const TrainerDashboard = () => {
                   <div key={training.id} className="trainer-formation-card">
                     <div className="trainer-formation-header">
                       <h3 className="trainer-formation-title">{training.title || 'Sans titre'}</h3>
-                      <span className={`trainer-formation-status ${training.status === 'En cours' ? 'active' : ''}`}>
+                      <span className={`trainer-formation-status ${
+                        training.status === 'En cours' ? 'encours' : 
+                        training.status === 'Terminée' ? 'terminee' : 
+                        'avenir'
+                      }`}>
                         {training.status || 'A Venir'}
                       </span>
+                      <div className="trainer-formation-meta">
+                        <div className="trainer-formation-meta-item">
+                          <Clock size={14} /> {training.duration || 'N/A'}
+                        </div>
+                        <div className="trainer-formation-meta-item">
+                          <Users size={14} /> {inscrits.length} inscrit{inscrits.length > 1 ? 's' : ''}
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="trainer-formation-info">
-                      <div className="trainer-formation-detail">
-                        <strong>Référence:</strong> {training.reference || 'N/A'}
+                    <div className="trainer-formation-body">
+                      <div className="trainer-formation-info">
+                        <div className="trainer-formation-info-item">
+                          <div className="trainer-formation-info-label">Référence</div>
+                          <div className="trainer-formation-info-value">{training.reference || 'N/A'}</div>
+                        </div>
+                        <div className="trainer-formation-info-item">
+                          <div className="trainer-formation-info-label">Lieu</div>
+                          <div className="trainer-formation-info-value">{training.location || 'N/A'}</div>
+                        </div>
+                        <div className="trainer-formation-info-item">
+                          <div className="trainer-formation-info-label">Date de début</div>
+                          <div className="trainer-formation-info-value">{training.startDate || 'N/A'}</div>
+                        </div>
+                        <div className="trainer-formation-info-item">
+                          <div className="trainer-formation-info-label">Date de fin</div>
+                          <div className="trainer-formation-info-value">{training.endDate || 'N/A'}</div>
+                        </div>
                       </div>
-                      <div className="trainer-formation-detail">
-                        <strong>Durée:</strong> {training.duration || 'N/A'}
-                      </div>
-                      <div className="trainer-formation-detail">
-                        <strong>Lieu:</strong> {training.location || 'N/A'}
-                      </div>
-                      <div className="trainer-formation-detail">
-                        <strong>Dates:</strong> {training.startDate || 'N/A'} - {training.endDate || 'N/A'}
-                      </div>
-                      <div className="trainer-formation-detail">
-                        <strong>Inscrits:</strong> {inscrits.length} élève(s)
-                      </div>
-                    </div>
 
-                    <div className="trainer-formation-actions">
-                      <button
-                        className="trainer-btn trainer-btn-primary"
-                        onClick={() => handleViewInscrits(formationWithInscrits)}
-                      >
-                        <Eye size={16} /> Voir les inscrits ({inscrits.length})
-                      </button>
-                      <button
-                        className="trainer-btn trainer-btn-secondary"
-                        onClick={() => handleEditFormation(training.id)}
-                      >
-                        <Edit size={16} /> Modifier
-                      </button>
-                      <button
-                        className="trainer-btn trainer-btn-secondary"
-                        onClick={() => handleCreateSession(training)}
-                        style={{ backgroundColor: '#1976d2', color: 'white' }}
-                      >
-                        <Calendar size={16} /> Créer session
-                      </button>
-                      <button
-                        className="trainer-btn"
-                        onClick={() => handleDeleteFormation(training.id)}
-                        style={{ backgroundColor: '#dc3545', color: 'white' }}
-                      >
-                        <Trash2 size={16} /> Supprimer
-                      </button>
+                      <div className="trainer-formation-actions">
+                        <button
+                          className="trainer-btn trainer-btn-primary"
+                          onClick={() => handleViewInscrits(formationWithInscrits)}
+                        >
+                          <Eye size={16} /> Inscrits ({inscrits.length})
+                        </button>
+                        <button
+                          className="trainer-btn trainer-btn-secondary"
+                          onClick={() => handleEditFormation(training.id)}
+                        >
+                          <Edit size={16} /> Modifier
+                        </button>
+                        <button
+                          className="trainer-btn trainer-btn-secondary"
+                          onClick={() => handleCreateSession(training)}
+                        >
+                          <Calendar size={16} /> Session
+                        </button>
+                        <button
+                          className="trainer-btn trainer-btn-danger"
+                          onClick={() => handleDeleteFormation(training.id)}
+                        >
+                          <Trash2 size={16} /> Supprimer
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

@@ -49,48 +49,59 @@ const ManageTrainers = () => {
 
   // Gérer l'ouverture du modal
   const handleOpenModal = (trainer = null) => {
-    if (trainer) {
-      // Mode édition - récupérer les données complètes du formateur
-      fetch(`http://localhost:8080/api/users/trainer/${trainer.id}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Erreur lors du chargement');
-          return res.json();
-        })
-        .then(fullTrainer => {
-          // Extraire nom et prénom du fullname
-          const nameParts = (trainer.fullname || '').split(' ');
-          const prenom = nameParts.length > 0 ? nameParts[0] : '';
-          const nom = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-          
-          setFormData({
-            nom: fullTrainer.nom || nom || '',
-            prenom: fullTrainer.prenom || prenom || '',
-            email: fullTrainer.email || '',
-            password: '', // Ne pas pré-remplir le mot de passe
-            poste: fullTrainer.poste || trainer.speciality || '',
-            typeContrat: fullTrainer.typeContrat || '',
-            tarif: fullTrainer.tarif || ''
+    console.log('handleOpenModal appelé avec:', trainer);
+    try {
+      if (trainer) {
+        // Mode édition - récupérer les données complètes du formateur
+        console.log('Mode édition pour le formateur:', trainer.id);
+        fetch(`http://localhost:8080/api/users/trainer/${trainer.id}`)
+          .then(res => {
+            if (!res.ok) throw new Error('Erreur lors du chargement');
+            return res.json();
+          })
+          .then(fullTrainer => {
+            console.log('Données complètes du formateur:', fullTrainer);
+            // Extraire nom et prénom du fullname
+            const nameParts = (trainer.fullname || '').split(' ');
+            const prenom = nameParts.length > 0 ? nameParts[0] : '';
+            const nom = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+            
+            setFormData({
+              nom: fullTrainer.nom || nom || '',
+              prenom: fullTrainer.prenom || prenom || '',
+              email: fullTrainer.email || '',
+              password: '', // Ne pas pré-remplir le mot de passe
+              poste: fullTrainer.poste || trainer.speciality || '',
+              typeContrat: fullTrainer.typeContrat || '',
+              tarif: fullTrainer.tarif ? String(fullTrainer.tarif) : ''
+            });
+            setEditingTrainerId(trainer.id);
+            setShowModal(true);
+            console.log('Modal ouvert en mode édition');
+          })
+          .catch(err => {
+            console.error('Erreur lors du chargement du formateur:', err);
+            setToast({ message: 'Erreur lors du chargement des données: ' + err.message, type: 'error' });
           });
-          setEditingTrainerId(trainer.id);
-          setShowModal(true);
-        })
-        .catch(err => {
-          console.error('Erreur lors du chargement du formateur:', err);
-          setToast({ message: 'Erreur lors du chargement des données', type: 'error' });
+      } else {
+        // Mode création
+        console.log('Mode création - ouverture du modal');
+        setFormData({
+          nom: '',
+          prenom: '',
+          email: '',
+          password: '',
+          poste: '',
+          typeContrat: '',
+          tarif: ''
         });
-    } else {
-      // Mode création
-      setFormData({
-        nom: '',
-        prenom: '',
-        email: '',
-        password: '',
-        poste: '',
-        typeContrat: '',
-        tarif: ''
-      });
-      setEditingTrainerId(null);
-      setShowModal(true);
+        setEditingTrainerId(null);
+        setShowModal(true);
+        console.log('Modal ouvert en mode création, showModal:', true);
+      }
+    } catch (error) {
+      console.error('Erreur dans handleOpenModal:', error);
+      setToast({ message: 'Erreur lors de l\'ouverture du formulaire: ' + error.message, type: 'error' });
     }
   };
 
@@ -178,8 +189,16 @@ const ManageTrainers = () => {
         body: JSON.stringify(bodyData)
       });
 
-      const responseText = await response.text();
-      console.log('Réponse du serveur:', response.status, responseText);
+      // Vérifier le Content-Type de la réponse
+      const contentType = response.headers.get('content-type');
+      let responseData = null;
+      
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        const responseText = await response.text();
+        console.log('Réponse du serveur (texte):', response.status, responseText);
+      }
 
       if (!response.ok) {
         let errorMessage = editingTrainerId 
@@ -187,14 +206,24 @@ const ManageTrainers = () => {
           : 'Erreur lors de la création du formateur';
         
         if (response.status === 400) {
-          errorMessage = 'Cet email est déjà utilisé ou données invalides';
+          errorMessage = 'Cet email est déjà utilisé ou données invalides. Vérifiez que tous les champs sont correctement remplis.';
         } else if (response.status === 404) {
           errorMessage = 'Formateur non trouvé';
         } else if (response.status === 500) {
-          errorMessage = 'Erreur serveur. Vérifiez les logs du backend.';
+          errorMessage = 'Erreur serveur. Vérifiez les logs du backend et que le serveur est bien démarré.';
+        }
+        
+        // Essayer d'extraire un message d'erreur plus détaillé si disponible
+        if (responseData && responseData.message) {
+          errorMessage = responseData.message;
         }
         
         throw new Error(errorMessage);
+      }
+
+      // Vérifier que la réponse contient bien des données
+      if (responseData) {
+        console.log('Formateur créé/modifié avec succès:', responseData);
       }
 
       setToast({ 
@@ -257,7 +286,16 @@ const ManageTrainers = () => {
             <h2 className="admin-page-title">Gestion des formateurs</h2>
             <p className="admin-page-subtitle">Suivi des formateurs et de leurs sessions</p>
           </div>
-          <button className="admin-btn-primary" onClick={handleOpenModal}>
+          <button 
+            className="admin-btn-primary" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Bouton cliqué - ouverture du modal');
+              handleOpenModal();
+            }}
+            type="button"
+          >
             <FaPlus />
             Ajouter un formateur
           </button>

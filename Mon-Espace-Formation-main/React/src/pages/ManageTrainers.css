@@ -2,6 +2,30 @@
   padding: 24px 0;
 }
 
+/* Bouton principal */
+.admin-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--admin-primary-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-btn-primary:hover {
+  background-color: #0a1f3d;
+}
+
+.admin-btn-primary:active {
+  transform: scale(0.98);
+}
+
 /* Trainers Grid */
 .trainers-grid {
   display: grid;
