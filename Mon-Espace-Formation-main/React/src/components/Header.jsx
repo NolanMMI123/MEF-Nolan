@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { theme } from '../utils/theme';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, User, Shield } from 'lucide-react';
+import { LogOut, User, Shield, GraduationCap } from 'lucide-react';
 
 const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,7 +57,7 @@ const Header = () => {
                         {isLoggedIn ? (
                             // CAS CONNECTÉ
                             <div className="d-flex gap-2">
-                                {/* Bouton Admin - visible uniquement pour les admins (remplace "Mon Espace") */}
+                                {/* Bouton selon le rôle */}
                                 {userRole === 'ROLE_ADMIN' ? (
                                     <Button
                                         as={Link}
@@ -66,6 +66,15 @@ const Header = () => {
                                         style={{ backgroundColor: '#10b981', color: 'white' }}
                                     >
                                         <Shield size={16} /> Admin
+                                    </Button>
+                                ) : userRole === 'TRAINER' ? (
+                                    <Button
+                                        as={Link}
+                                        to="/trainer/dashboard"
+                                        className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center gap-2"
+                                        style={{ backgroundColor: '#1976d2', color: 'white' }}
+                                    >
+                                        <GraduationCap size={16} /> Mon Espace
                                     </Button>
                                 ) : (
                                     // Bouton "Mon Espace" - visible uniquement pour les utilisateurs standards

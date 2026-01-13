@@ -25,6 +25,7 @@ public class Training {
     private String trainerName;    // Ex: Jean-Pierre Martin
     private String trainerRole;    // Ex: Expert React & TypeScript
     private String trainerEmail;
+    private String trainerId;      // ID du formateur (User.id) pour lier la formation au formateur
 
     // Statut (pour l'affichage "A Venir", "En cours")
     private String status;

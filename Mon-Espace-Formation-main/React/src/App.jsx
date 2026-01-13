@@ -28,6 +28,9 @@ import ManageTrainings from './pages/ManageTrainings';
 import AdminAttestations from './pages/AdminAttestations';
 import AdminSettings from './pages/AdminSettings';
 import AdminRoute from './components/AdminRoute';
+// 👇 IMPORTS FORMATEUR
+import TrainerDashboard from './pages/TrainerDashboard';
+import TrainerRoute from './components/TrainerRoute';
 
 function App() {
   const location = useLocation();
@@ -35,8 +38,9 @@ function App() {
   // CORRECTION ICI : Remplacement de '/inscription-compte' par '/inscription'
   const isAuthPage = location.pathname === '/connexion' || location.pathname === '/inscription';
   
-  // On cache le header/footer sur toutes les pages d'administration
+  // On cache le header/footer sur toutes les pages d'administration et formateur
   const isAdminPage = location.pathname.startsWith('/admin');
+  const isTrainerPage = location.pathname.startsWith('/trainer');
 
   // Scroll en haut de page à chaque changement de route
   useEffect(() => {
@@ -46,7 +50,7 @@ function App() {
   return (
     <div className="d-flex flex-column min-vh-100">
 
-      {!isAuthPage && !isAdminPage && <Header />}
+      {!isAuthPage && !isAdminPage && !isTrainerPage && <Header />}
 
       <main className="flex-grow-1">
         <Routes>
@@ -83,12 +87,16 @@ function App() {
           <Route path="/admin/attestations" element={<AdminRoute><AdminAttestations /></AdminRoute>} />
           <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
           
+          {/* Formateur - Routes protégées */}
+          <Route path="/trainer/dashboard" element={<TrainerRoute><TrainerDashboard /></TrainerRoute>} />
+          <Route path="/trainer/formations/:id" element={<TrainerRoute><TrainerDashboard /></TrainerRoute>} />
+          
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
 
-      {!isAuthPage && !isAdminPage && <Footer />}
+      {!isAuthPage && !isAdminPage && !isTrainerPage && <Footer />}
     </div>
   );
 }
