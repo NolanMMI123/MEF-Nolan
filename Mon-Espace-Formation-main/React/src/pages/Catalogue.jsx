@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, InputGroup, Button, Card, Spinner } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { FaSearch, FaClock, FaUser, FaArrowRight, FaFilter } from 'react-icons/fa';
+import { FaSearch, FaClock, FaUser, FaArrowRight, FaFilter, FaChalkboardTeacher } from 'react-icons/fa';
 import { theme } from '../utils/theme';
 import { catalogueData } from '../utils/data';
 
@@ -182,6 +182,15 @@ const Catalogue = () => {
                                                         <FaUser className="text-primary" /> {formation.level || "Tous niveaux"}
                                                     </div>
                                                 </div>
+                                                
+                                                {formation.trainerName && (
+                                                    <div className="mb-3 small">
+                                                        <div className="d-flex align-items-center gap-2 text-muted">
+                                                            <FaChalkboardTeacher className="text-primary" style={{ fontSize: '0.9rem' }} />
+                                                            <span><strong>Formateur:</strong> {formation.trainerName}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
 
                                                 <div className="d-flex align-items-center justify-content-between mt-auto pt-3 border-top">
                                                     <span className="fw-bold fs-5" style={{ color: theme.colors.accentText || '#0d6efd' }}>

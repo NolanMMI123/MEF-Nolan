@@ -108,6 +108,12 @@ const FormationDetails = () => {
                                         <span className="text-warning fw-bold">€</span>
                                         <span>{course.price} TTC</span>
                                     </div>
+                                    {course.trainerName && (
+                                        <div className="d-flex align-items-center gap-2">
+                                            <FaChalkboardTeacher className="text-warning" />
+                                            <span><strong>Formateur:</strong> {course.trainerName}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         </Col>

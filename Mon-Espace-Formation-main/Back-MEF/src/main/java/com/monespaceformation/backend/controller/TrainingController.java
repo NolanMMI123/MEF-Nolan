@@ -62,6 +62,20 @@ public class TrainingController {
                 training.setStatus("A Venir");
             }
 
+            // Initialiser les champs pédagogiques s'ils sont null (mais pas s'ils sont vides - liste vide ou chaîne vide sont valides)
+            if (training.getDescription() == null) {
+                training.setDescription("");
+            }
+            if (training.getObjectifs() == null) {
+                training.setObjectifs(new java.util.ArrayList<>());
+            }
+            if (training.getPrerequis() == null) {
+                training.setPrerequis(new java.util.ArrayList<>());
+            }
+            if (training.getProgramme() == null) {
+                training.setProgramme("");
+            }
+
             Training saved = trainingRepository.save(training);
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
@@ -140,7 +154,17 @@ public class TrainingController {
             if (trainingUpdate.getStatus() != null) {
                 training.setStatus(trainingUpdate.getStatus());
             }
-            // Mettre à jour le contenu pédagogique
+            // Mettre à jour les dates
+            if (trainingUpdate.getStartDate() != null) {
+                training.setStartDate(trainingUpdate.getStartDate());
+            }
+            if (trainingUpdate.getEndDate() != null) {
+                training.setEndDate(trainingUpdate.getEndDate());
+            }
+            // Mettre à jour la description et le contenu pédagogique
+            if (trainingUpdate.getDescription() != null) {
+                training.setDescription(trainingUpdate.getDescription());
+            }
             if (trainingUpdate.getObjectifs() != null) {
                 training.setObjectifs(trainingUpdate.getObjectifs());
             }

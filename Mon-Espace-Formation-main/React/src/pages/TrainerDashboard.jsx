@@ -33,6 +33,7 @@ const TrainerDashboard = () => {
     startDate: '',
     endDate: '',
     status: 'A Venir',
+    description: '',  // Description générale
     objectifs: [],
     prerequis: [],
     programme: ''
@@ -158,6 +159,7 @@ const TrainerDashboard = () => {
           startDate: convertToDateInput(training.startDate),
           endDate: convertToDateInput(training.endDate),
           status: training.status || 'A Venir',
+          description: training.description || '',
           objectifs: training.objectifs || [],
           prerequis: training.prerequis || [],
           programme: training.programme || ''
@@ -172,6 +174,7 @@ const TrainerDashboard = () => {
 
   const handleCreateFormation = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // Réinitialiser tous les champs, y compris le contenu pédagogique
     setFullTrainingFormData({
       title: '',
       duration: '',
@@ -180,10 +183,14 @@ const TrainerDashboard = () => {
       startDate: '',
       endDate: '',
       status: 'A Venir',
-      objectifs: [],
-      prerequis: [],
-      programme: ''
+      description: '', // Description vide pour commencer
+      objectifs: [], // Liste vide pour commencer
+      prerequis: [], // Liste vide pour commencer
+      programme: '' // Programme vide pour commencer
     });
+    // Réinitialiser aussi les champs d'édition
+    setEditingObjective('');
+    setEditingPrerequis('');
     setTrainingData({ trainerId: user.id, trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim(), trainerEmail: user.email });
     setShowCreateModal(true);
   };
@@ -317,13 +324,42 @@ const TrainerDashboard = () => {
 
     setSubmitting(true);
     try {
+      // Formater les dates pour l'affichage (format français)
+      const formatDateForDisplay = (dateString) => {
+        if (!dateString) return '';
+        // Si c'est déjà au format YYYY-MM-DD, le convertir
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+          const date = new Date(dateString + 'T00:00:00');
+          const day = date.getDate();
+          const month = date.toLocaleString('fr-FR', { month: 'long' });
+          const year = date.getFullYear();
+          return `${day} ${month} ${year}`;
+        }
+        // Sinon, retourner tel quel (déjà formaté)
+        return dateString;
+      };
+
+        // Préparer les données à envoyer - IMPORTANT : inclure explicitement tous les champs
       const trainingDataToSend = {
-        ...fullTrainingFormData,
+        title: fullTrainingFormData.title || '',
+        duration: fullTrainingFormData.duration || '',
+        location: fullTrainingFormData.location || '',
         price: fullTrainingFormData.price ? parseFloat(fullTrainingFormData.price) : null,
+        startDate: fullTrainingFormData.startDate ? formatDateForDisplay(fullTrainingFormData.startDate) : '',
+        endDate: fullTrainingFormData.endDate ? formatDateForDisplay(fullTrainingFormData.endDate) : '',
+        status: fullTrainingFormData.status || 'A Venir',
+        // Description et contenu pédagogique - CRUCIAL : s'assurer que ces champs sont bien inclus
+        description: fullTrainingFormData.description || '',
+        objectifs: Array.isArray(fullTrainingFormData.objectifs) ? fullTrainingFormData.objectifs : [],
+        prerequis: Array.isArray(fullTrainingFormData.prerequis) ? fullTrainingFormData.prerequis : [],
+        programme: fullTrainingFormData.programme || '',
+        // Informations du formateur
         trainerId: user.id,
         trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim() || user.email,
         trainerEmail: user.email
       };
+
+      console.log('📤 Données envoyées au backend:', JSON.stringify(trainingDataToSend, null, 2));
 
       const url = trainingData?.id 
         ? `http://localhost:8080/api/trainings/${trainingData.id}`
@@ -341,10 +377,38 @@ const TrainerDashboard = () => {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erreur serveur:', response.status, errorText);
         if (response.status === 403) {
           throw new Error('Vous n\'êtes pas autorisé à modifier cette formation');
         }
-        throw new Error('Erreur lors de la sauvegarde');
+        if (response.status === 400) {
+          throw new Error('Données invalides. Vérifiez que tous les champs sont correctement remplis.');
+        }
+        throw new Error('Erreur lors de la sauvegarde : ' + (errorText || 'Erreur serveur'));
+      }
+
+      const savedTraining = await response.json();
+      console.log('✅ Formation sauvegardée avec succès:', savedTraining);
+      console.log('📋 Contenu pédagogique sauvegardé:', {
+        description: savedTraining.description,
+        objectifs: savedTraining.objectifs,
+        prerequis: savedTraining.prerequis,
+        programme: savedTraining.programme
+      });
+
+      // Vérifier que les données pédagogiques ont bien été sauvegardées
+      if (savedTraining.objectifs && savedTraining.objectifs.length > 0) {
+        console.log('✅ Objectifs sauvegardés:', savedTraining.objectifs);
+      }
+      if (savedTraining.prerequis && savedTraining.prerequis.length > 0) {
+        console.log('✅ Prérequis sauvegardés:', savedTraining.prerequis);
+      }
+      if (savedTraining.programme && savedTraining.programme.trim() !== '') {
+        console.log('✅ Programme sauvegardé');
+      }
+      if (savedTraining.description && savedTraining.description.trim() !== '') {
+        console.log('✅ Description sauvegardée');
       }
 
       setToast({ 
@@ -770,6 +834,10 @@ const TrainerDashboard = () => {
                           <div className="trainer-formation-info-value">{training.location || 'N/A'}</div>
                         </div>
                         <div className="trainer-formation-info-item">
+                          <div className="trainer-formation-info-label">Formateur</div>
+                          <div className="trainer-formation-info-value">{training.trainerName || 'Non assigné'}</div>
+                        </div>
+                        <div className="trainer-formation-info-item">
                           <div className="trainer-formation-info-label">Date de début</div>
                           <div className="trainer-formation-info-value">{training.startDate || 'N/A'}</div>
                         </div>
@@ -962,8 +1030,28 @@ const TrainerDashboard = () => {
                 </select>
               </div>
 
-              <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Objectifs</h3>
               <div className="trainer-form-group">
+                <label className="trainer-form-label">Description de la formation</label>
+                <textarea
+                  value={fullTrainingFormData.description || ''}
+                  onChange={(e) => setFullTrainingFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Décrivez la formation, son contenu, ses objectifs généraux. Cette description sera visible dans le catalogue."
+                  className="trainer-textarea"
+                  rows={4}
+                />
+                <p className="trainer-form-hint">Description générale de la formation (visible dans le catalogue)</p>
+              </div>
+
+              <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Objectifs pédagogiques</h3>
+              <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
+                Définissez les objectifs d'apprentissage que les participants atteindront à la fin de la formation
+              </p>
+              <div className="trainer-form-group">
+                {fullTrainingFormData.objectifs.length === 0 && (
+                  <p className="trainer-form-hint" style={{ fontStyle: 'italic', color: '#999', marginBottom: '12px' }}>
+                    Aucun objectif ajouté. Cliquez sur "Ajouter" après avoir saisi un objectif.
+                  </p>
+                )}
                 <div className="trainer-objectives-list">
                   {fullTrainingFormData.objectifs.map((obj, index) => (
                     <div key={index} className="trainer-list-item">
@@ -1004,7 +1092,15 @@ const TrainerDashboard = () => {
               </div>
 
               <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Prérequis</h3>
+              <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
+                Liste les compétences ou connaissances nécessaires pour suivre cette formation
+              </p>
               <div className="trainer-form-group">
+                {fullTrainingFormData.prerequis.length === 0 && (
+                  <p className="trainer-form-hint" style={{ fontStyle: 'italic', color: '#999', marginBottom: '12px' }}>
+                    Aucun prérequis ajouté. Cliquez sur "Ajouter" après avoir saisi un prérequis.
+                  </p>
+                )}
                 <div className="trainer-prerequis-list">
                   {fullTrainingFormData.prerequis.map((prereq, index) => (
                     <div key={index} className="trainer-list-item">
@@ -1045,13 +1141,16 @@ const TrainerDashboard = () => {
               </div>
 
               <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Programme détaillé</h3>
+              <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
+                Décrivez le programme complet de la formation, module par module si nécessaire
+              </p>
               <div className="trainer-form-group">
                 <textarea
-                  value={fullTrainingFormData.programme}
+                  value={fullTrainingFormData.programme || ''}
                   onChange={(e) => setFullTrainingFormData(prev => ({ ...prev, programme: e.target.value }))}
-                  placeholder="Décrivez le programme détaillé de la formation..."
+                  placeholder="Exemple :\n\nModule 1 : Introduction (2h)\n- Présentation des concepts\n- Installation des outils\n\nModule 2 : Bases (4h)\n- Syntaxe de base\n- Premiers exercices..."
                   className="trainer-textarea"
-                  rows={6}
+                  rows={8}
                 />
               </div>
             </div>
