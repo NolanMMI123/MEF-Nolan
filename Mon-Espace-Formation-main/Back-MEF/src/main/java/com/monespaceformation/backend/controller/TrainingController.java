@@ -75,8 +75,17 @@ public class TrainingController {
             if (training.getProgramme() == null) {
                 training.setProgramme("");
             }
+            
+            // Log pour déboguer
+            System.out.println("📝 Création formation - Objectifs: " + training.getObjectifs());
+            System.out.println("📝 Création formation - Prérequis: " + training.getPrerequis());
+            System.out.println("📝 Création formation - Programme: " + training.getProgramme());
 
             Training saved = trainingRepository.save(training);
+            System.out.println("✅ Formation sauvegardée - ID: " + saved.getId());
+            System.out.println("✅ Formation sauvegardée - Objectifs: " + saved.getObjectifs());
+            System.out.println("✅ Formation sauvegardée - Prérequis: " + saved.getPrerequis());
+            System.out.println("✅ Formation sauvegardée - Programme: " + saved.getProgramme());
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,15 +174,17 @@ public class TrainingController {
             if (trainingUpdate.getDescription() != null) {
                 training.setDescription(trainingUpdate.getDescription());
             }
-            if (trainingUpdate.getObjectifs() != null) {
-                training.setObjectifs(trainingUpdate.getObjectifs());
-            }
-            if (trainingUpdate.getPrerequis() != null) {
-                training.setPrerequis(trainingUpdate.getPrerequis());
-            }
-            if (trainingUpdate.getProgramme() != null) {
-                training.setProgramme(trainingUpdate.getProgramme());
-            }
+            // Toujours mettre à jour les objectifs (même si c'est une liste vide)
+            training.setObjectifs(trainingUpdate.getObjectifs() != null ? trainingUpdate.getObjectifs() : new java.util.ArrayList<>());
+            // Toujours mettre à jour les prérequis (même si c'est une liste vide)
+            training.setPrerequis(trainingUpdate.getPrerequis() != null ? trainingUpdate.getPrerequis() : new java.util.ArrayList<>());
+            // Toujours mettre à jour le programme (même si c'est une chaîne vide)
+            training.setProgramme(trainingUpdate.getProgramme() != null ? trainingUpdate.getProgramme() : "");
+            
+            // Log pour déboguer
+            System.out.println("📝 Mise à jour formation - Objectifs: " + training.getObjectifs());
+            System.out.println("📝 Mise à jour formation - Prérequis: " + training.getPrerequis());
+            System.out.println("📝 Mise à jour formation - Programme: " + training.getProgramme());
 
             Training saved = trainingRepository.save(training);
             return ResponseEntity.ok(saved);
