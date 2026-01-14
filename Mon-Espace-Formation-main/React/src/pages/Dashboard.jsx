@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { 
     Calendar, Clock, MapPin, Download, FileText, CheckCircle, 
-    Mail, AlertCircle, BookOpen, ShieldCheck, Award, Info 
+    Mail, AlertCircle, BookOpen, ShieldCheck, Award, Info, Star
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -102,6 +102,26 @@ const TrainingCard = ({ training, progressWidth }) => {
                             <span>Taux de présence : 0%</span>
                         </div>
                     </div>
+
+                    {/* Affichage de la note si elle existe */}
+                    {training.note != null && (
+                        <div className="mt-4 p-3 rounded" style={{
+                            backgroundColor: training.note >= 10 ? '#d4edda' : '#f8d7da',
+                            border: `1px solid ${training.note >= 10 ? '#c3e6cb' : '#f5c6cb'}`
+                        }}>
+                            <div className="d-flex align-items-center gap-2">
+                                <Star size={20} color={training.note >= 10 ? '#28a745' : '#dc3545'} />
+                                <div>
+                                    <div className="fw-bold" style={{color: training.note >= 10 ? '#155724' : '#721c24'}}>
+                                        Votre note : {training.note.toFixed(1)}/20
+                                    </div>
+                                    <div className="small" style={{color: training.note >= 10 ? '#155724' : '#721c24'}}>
+                                        {training.note >= 10 ? 'Félicitations !' : 'Continuez vos efforts !'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -226,6 +246,26 @@ const TrainingCard = ({ training, progressWidth }) => {
                         <h5 className="fw-bold mb-1" style={{color: '#333'}}>Attestation de formation</h5>
                         <p className="text-muted small mb-3">Votre attestation sera disponible à l'issue de la formation</p>
 
+                        {/* Affichage de la note si elle existe */}
+                        {training.note != null && (
+                            <div className="d-flex align-items-center gap-3 p-3 rounded mb-4" style={{
+                                backgroundColor: training.note >= 10 ? '#d4edda' : '#fff3cd',
+                                border: `1px solid ${training.note >= 10 ? '#c3e6cb' : '#ffc107'}`
+                            }}>
+                                <Star size={24} color={training.note >= 10 ? '#28a745' : '#ffc107'} />
+                                <div className="flex-grow-1">
+                                    <div className="fw-bold" style={{color: training.note >= 10 ? '#155724' : '#856404'}}>
+                                        Votre note : {training.note.toFixed(1)}/20
+                                    </div>
+                                    <div className="small" style={{color: training.note >= 10 ? '#155724' : '#856404'}}>
+                                        {training.note >= 10 
+                                            ? 'Excellent travail ! Vous avez validé la formation.' 
+                                            : 'Note obtenue pour cette formation.'}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Alerte Grise */}
                         <div className="d-flex gap-3 p-3 rounded mb-5" style={{backgroundColor: '#f0f0f0', border: '1px solid #e0e0e0'}}>
                             <Info className="flex-shrink-0 mt-1" size={20} color="#333"/>
@@ -313,7 +353,18 @@ const Dashboard = () => {
   // --- LOGIQUE LISTE ---
   let trainingsList = [];
   if (data.inscriptions && Array.isArray(data.inscriptions)) {
-      trainingsList = data.inscriptions;
+      // Transformer les SessionWithNote en objets avec session et note
+      trainingsList = data.inscriptions.map(item => {
+          // Si l'item a déjà une structure session/note (nouveau format)
+          if (item.session) {
+              return {
+                  ...item.session,
+                  note: item.note // Ajouter la note à l'objet session
+              };
+          }
+          // Sinon, c'est l'ancien format (SessionFormation directe)
+          return item;
+      });
   } else if (data.currentTraining) {
       trainingsList = [data.currentTraining];
   }

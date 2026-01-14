@@ -1,18 +1,17 @@
 package com.monespaceformation.backend.dto;
 
-import com.monespaceformation.backend.model.SessionFormation;
 import com.monespaceformation.backend.model.User;
 import java.util.List; // <--- TRÈS IMPORTANT
 
 public class DashboardSummary {
     private User user;
     
-    // 👇 ON A REMPLACÉ "SessionFormation" PAR "List<SessionFormation>"
-    private List<SessionFormation> inscriptions; 
+    // 👇 ON A REMPLACÉ "SessionFormation" PAR "List<SessionWithNote>" pour inclure la note
+    private List<SessionWithNote> inscriptions; 
     
     private Statistics stats;
 
-    public DashboardSummary(User user, List<SessionFormation> inscriptions, Statistics stats) {
+    public DashboardSummary(User user, List<SessionWithNote> inscriptions, Statistics stats) {
         this.user = user;
         this.inscriptions = inscriptions;
         this.stats = stats;
@@ -22,9 +21,9 @@ public class DashboardSummary {
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
-    // Le getter renvoie une liste
-    public List<SessionFormation> getInscriptions() { return inscriptions; }
-    public void setInscriptions(List<SessionFormation> inscriptions) { this.inscriptions = inscriptions; }
+    // Le getter renvoie une liste de SessionWithNote
+    public List<SessionWithNote> getInscriptions() { return inscriptions; }
+    public void setInscriptions(List<SessionWithNote> inscriptions) { this.inscriptions = inscriptions; }
 
     public Statistics getStats() { return stats; }
     public void setStats(Statistics stats) { this.stats = stats; }

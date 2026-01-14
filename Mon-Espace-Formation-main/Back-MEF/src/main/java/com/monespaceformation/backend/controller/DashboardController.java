@@ -2,6 +2,7 @@ package com.monespaceformation.backend.controller;
 
 import com.monespaceformation.backend.dto.AdminDashboardSummaryDTO;
 import com.monespaceformation.backend.dto.DashboardSummary;
+import com.monespaceformation.backend.dto.SessionWithNote;
 import com.monespaceformation.backend.dto.TrainerDashboardDTO;
 import com.monespaceformation.backend.model.Inscription;
 import com.monespaceformation.backend.model.SessionFormation;
@@ -49,8 +50,8 @@ public class DashboardController {
             // 2. Trouver TOUTES ses inscriptions (Liste d'IDs)
             List<Inscription> mesInscriptions = inscriptionRepository.findByUserId(user.getId());
 
-            // 3. Récupérer les détails complets des SESSIONS (Titres, dates...)
-            List<SessionFormation> mesSessions = new ArrayList<>();
+            // 3. Récupérer les détails complets des SESSIONS avec les notes (Titres, dates...)
+            List<SessionWithNote> mesSessions = new ArrayList<>();
             int heuresTotales = 0;
 
             for (Inscription insc : mesInscriptions) {
@@ -60,7 +61,9 @@ public class DashboardController {
                 
                 if (sessionOpt.isPresent()) {
                     SessionFormation session = sessionOpt.get();
-                    mesSessions.add(session); // On l'ajoute à la liste à envoyer
+                    // Créer un SessionWithNote avec la session et la note de l'inscription
+                    SessionWithNote sessionWithNote = new SessionWithNote(session, insc.getNote());
+                    mesSessions.add(sessionWithNote); // On l'ajoute à la liste à envoyer
                     
                     // Calcul des heures (ex: 35h par formation)
                     heuresTotales += 35; 
