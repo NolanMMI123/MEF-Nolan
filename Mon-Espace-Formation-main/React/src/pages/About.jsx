@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { FaNetworkWired, FaServer, FaCode, FaDatabase, FaFileWord, FaShieldAlt, FaTasks, FaEnvelope, FaRegEnvelope  } from 'react-icons/fa';
+import { FaNetworkWired, FaServer, FaCode, FaDatabase, FaFileWord, FaShieldAlt, FaTasks, FaEnvelope, FaRegEnvelope, FaGraduationCap, FaUsersCog, FaLaptop, FaCertificate  } from 'react-icons/fa';
 import { LiaMapMarkerAltSolid } from "react-icons/lia";
 import { MdOutlinePhone } from "react-icons/md";
 import { IoBookOutline } from "react-icons/io5";
@@ -85,6 +85,7 @@ const About = () => {
                         </Col>
                         <Col lg={5} className='mt-5 pt-3'>
                             <Card className="p-4 shadow-sm border-0">
+                                <img src="/photo-1758876203342-fc14c0bba67c.jpeg" alt="Espace de formation moderne" className="img-fluid rounded" />
                             </Card>
                         </Col>
                         <motion.p className='border-1 border-rounded background'>"Former les talents de demain avec les technologies d'aujourd'hui"</motion.p>
@@ -98,7 +99,7 @@ const About = () => {
                     <Row className="justify-content-center">
                         <Col lg={4}>
                             <div class="card shadow-sm">
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <img src="/01401700127181-web-tete.jpg" alt="Roger DURAND" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Roger DURAND</h5>
                                     <h6 class="card-subtitle mb-2" style={{ color: theme.colors.accent }}>Co-fondateur & Directeur Pédagogique</h6>
@@ -108,7 +109,7 @@ const About = () => {
                         </Col>
                         <Col lg={4}>
                             <div class="card shadow-sm">
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <img src="/60a282b60d1f8803450013.jpg" alt="Alice ROMAINVILLE" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover', objectPosition: '65% center' }} />
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Alice ROMAINVILLE</h5>
                                     <h6 class="card-subtitle mb-2" style={{ color: theme.colors.accent }}>Co-fondatrice & Directrice Technique</h6>
@@ -118,7 +119,7 @@ const About = () => {
                         </Col>
                         <Col lg={4}>
                             <div class="card shadow-sm">
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <img src="/phpLzl8Zt_1.jpg" alt="Lionel PRIGENT" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover', objectPosition: '90% center' }} />
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Lionel PRIGENT</h5>
                                     <h6 class="card-subtitle mb-2" style={{ color: theme.colors.accent }}>Co-fondateur & Directeur Développement</h6>
@@ -136,7 +137,9 @@ const About = () => {
                     <Row className="justify-content-center">
                         <Col lg={3}>
                             <div class="card shadow-sm border-2 rounded h-100 d-flex flex-column" style={{ borderColor: '#e9ecef' }}>
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <div className="d-flex justify-content-center align-items-center rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', backgroundColor: theme.colors.primary }}>
+                                    <FaGraduationCap size={50} color={theme.colors.accent} />
+                                </div>
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Excellence Pédagique</h5>
                                     <p class="card-text">Des formations de qualité conçues par des experts métiers avec une approche pratique et opérationnelle.</p>
@@ -145,7 +148,9 @@ const About = () => {
                         </Col>
                         <Col lg={3}>
                             <div class="card shadow-sm border-2 rounded h-100 d-flex flex-column" style={{ borderColor: '#e9ecef' }}>
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <div className="d-flex justify-content-center align-items-center rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', backgroundColor: theme.colors.primary }}>
+                                    <FaUsersCog size={50} color={theme.colors.accent} />
+                                </div>
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Accompagnement Personnalisé</h5>
                                     <p class="card-text">Un suivi individualisé de chaque participant pour garantir l’acquisition des compétences.</p>
@@ -154,7 +159,9 @@ const About = () => {
                         </Col>
                         <Col lg={3}>
                             <div class="card shadow-sm border-2 rounded h-100 d-flex flex-column" style={{ borderColor: '#e9ecef' }}>
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <div className="d-flex justify-content-center align-items-center rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', backgroundColor: theme.colors.primary }}>
+                                    <FaLaptop size={50} color={theme.colors.accent} />
+                                </div>
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Matériel Professionnel</h5>
                                     <p class="card-text">Tous nos participants bénéficient de PC portables performants fournis par TCLFORMA pendant la formation</p>
@@ -163,7 +170,9 @@ const About = () => {
                         </Col>
                         <Col lg={3}>
                             <div class="card shadow-sm border-2 rounded h-100 d-flex flex-column" style={{ borderColor: '#e9ecef' }}>
-                                <img src="" alt="" class="card-img-top rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                                <div className="d-flex justify-content-center align-items-center rounded-circle mx-auto mt-3" style={{ width: '120px', height: '120px', backgroundColor: theme.colors.primary }}>
+                                    <FaCertificate size={50} color={theme.colors.accent} />
+                                </div>
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Certifications Reconnues</h5>
                                     <p class="card-text">Des attestations de formation conformes et reconnues par les organismes professionnels.</p>
@@ -178,6 +187,7 @@ const About = () => {
                     <Row className="justify-content-center text-start mb-5">
                         <Col lg={6}>
                             <Card className="p-4 shadow-sm border-0">
+                                <img src="/vacant-modern-workspace-with-computers.jpg" alt="Formation TXLFORMA" className="img-fluid rounded" />
                             </Card>
                         </Col>
                         <Col lg={6}>

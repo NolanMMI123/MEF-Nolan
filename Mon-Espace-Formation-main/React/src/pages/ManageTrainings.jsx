@@ -34,7 +34,7 @@ const ManageTrainings = () => {
 
   const fetchTrainings = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/trainings');
+      const response = await fetch('/api/trainings');
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des formations');
       }
@@ -118,8 +118,8 @@ const ManageTrainings = () => {
     setSubmitting(true);
     try {
       const url = editingTrainingId 
-        ? `http://localhost:8080/api/trainings/${editingTrainingId}`
-        : 'http://localhost:8080/api/trainings';
+        ? `/api/trainings/${editingTrainingId}`
+        : '/api/trainings';
       const method = editingTrainingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -162,7 +162,7 @@ const ManageTrainings = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/trainings/${id}`, {
+      const response = await fetch(`/api/trainings/${id}`, {
         method: 'DELETE'
       });
 
@@ -261,10 +261,12 @@ const ManageTrainings = () => {
                     <span className="training-detail-label">Prix:</span>
                     <span className="training-detail-value price">{formatPrice(training.price)}</span>
                   </div>
+                  {training.trainerName && (
                     <div className="training-detail-item">
                       <span className="training-detail-label">Formateur:</span>
-                    <span className="training-detail-value">{training.trainerName || 'Non assigné'}</span>
+                      <span className="training-detail-value">{training.trainerName}</span>
                     </div>
+                  )}
                 </div>
                 <div className="training-actions">
                   <button 

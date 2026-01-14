@@ -6,8 +6,18 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
-        <footer className="pt-5 pb-3" style={{ backgroundColor: theme.colors.bgFooter, color: 'white', fontSize: '0.9rem' }}>
-            <Container>
+        <>
+            <style>{`
+                .footer-legal-link {
+                    transition: color 0.3s ease, text-decoration 0.3s ease;
+                }
+                .footer-legal-link:hover {
+                    color: ${theme.colors.accent} !important;
+                    text-decoration: underline !important;
+                }
+            `}</style>
+            <footer className="pt-5 pb-3" style={{ backgroundColor: theme.colors.bgFooter, color: 'white', fontSize: '0.9rem' }}>
+                <Container>
                 <Row className="gy-4 mb-5">
                     <Col lg={4}>
                         <div className="mb-4">
@@ -28,17 +38,17 @@ const Footer = () => {
                         <h6 className="fw-bold text-warning mb-4">Liens Rapides</h6>
                         <ul className="list-unstyled opacity-75 d-flex flex-column gap-2">
                             <li>
-                                <Link to="/contact" className="text-white text-decoration-none" onClick={() => window.scrollTo(0, 0)}>
+                                <Link to="/contact" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
                                     Nous contacter
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/formations" className="text-white text-decoration-none" onClick={() => window.scrollTo(0, 0)}>
+                                <Link to="/formations" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
                                     Nos Formations
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/about" className="text-white text-decoration-none" onClick={() => window.scrollTo(0, 0)}>
+                                <Link to="/about" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
                                     A Propos
                                 </Link>
                             </li>
@@ -47,10 +57,26 @@ const Footer = () => {
                     <Col lg={3}>
                         <h6 className="fw-bold text-warning mb-4">Nos Formations</h6>
                         <ul className="list-unstyled opacity-75 d-flex flex-column gap-2">
-                            <li>Réseaux et Télécoms</li>
-                            <li>Administration Système</li>
-                            <li>Développement Front-End</li>
-                            <li>Cybersécurité</li>
+                            <li>
+                                <Link to="/formations" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
+                                    Réseaux et Télécoms
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/formations" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
+                                    Administration Système
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/formations" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
+                                    Développement Front-End
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/formations" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
+                                    Cybersécurité
+                                </Link>
+                            </li>
                         </ul>
                     </Col>
                     <Col lg={3}>
@@ -68,14 +94,24 @@ const Footer = () => {
                             © 2025 Mon Espace Formation - TXLFORMA. Tous droits réservés.
                         </Col>
                         <Col md={6} className="text-md-end mt-2 mt-md-0">
-                            <span className="mx-2">Mentions légales</span>
-                            <span className="mx-2">Politique de confidentialité</span>
-                            <span className="mx-2">CGV</span>
+                            <Link to="/MentionsLegales" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
+                                Mentions légales
+                            </Link>
+                            <Link to="/PolitiqueConfidentialite" className="text-white text-decoration-none footer-legal-link mx-2" onClick={() => window.scrollTo(0, 0)}>
+                                Politique de confidentialité
+                            </Link>
+                            <Link to="/ConditionsUtilisation" className="text-white text-decoration-none footer-legal-link mx-2" onClick={() => window.scrollTo(0, 0)}>
+                                CGU
+                            </Link>
+                            <Link to="/CGV" className="text-white text-decoration-none footer-legal-link" onClick={() => window.scrollTo(0, 0)}>
+                                CGV
+                            </Link>
                         </Col>
                     </Row>
                 </div>
             </Container>
         </footer>
+        </>
     );
 };
 

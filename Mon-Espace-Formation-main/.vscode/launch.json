@@ -2,13 +2,10 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-BackendApplication<backend>",
+            "name": "BackendApplication",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
             "mainClass": "com.monespaceformation.backend.BackendApplication",
-            "projectName": "backend",
-            "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "projectName": "backend"
         }
     ]
 }

@@ -17,6 +17,7 @@ const Register = () => {
         nom: '',
         prenom: '',
         email: '',
+        entreprise: '',
         password: '',
         confirmPassword: ''
     });
@@ -40,13 +41,14 @@ const Register = () => {
 
         // 2. Envoi des données au serveur Java
         try {
-            const response = await fetch('http://localhost:8080/api/auth/register', {
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     nom: formData.nom,
                     prenom: formData.prenom,
                     email: formData.email,
+                    entreprise: formData.entreprise,
                     password: formData.password
                 })
             });
@@ -81,7 +83,7 @@ const Register = () => {
                 <Row className="mb-3">
                     <Col md={6}>
                         <Form.Group controlId="regPrenom">
-                            <Form.Label className="fw-bold small text-secondary">Prénom</Form.Label>
+                            <Form.Label className="fw-bold small text-secondary">Prénom <span className="text-danger">*</span></Form.Label>
                             <Form.Control 
                                 type="text" 
                                 placeholder="Votre prénom" 
@@ -95,7 +97,7 @@ const Register = () => {
                     </Col>
                     <Col md={6} className="mt-3 mt-md-0">
                         <Form.Group controlId="regNom">
-                            <Form.Label className="fw-bold small text-secondary">Nom</Form.Label>
+                            <Form.Label className="fw-bold small text-secondary">Nom <span className="text-danger">*</span></Form.Label>
                             <Form.Control 
                                 type="text" 
                                 placeholder="Votre nom" 
@@ -110,7 +112,7 @@ const Register = () => {
                 </Row>
 
                 <Form.Group className="mb-3" controlId="regEmail">
-                    <Form.Label className="fw-bold small text-secondary">Email</Form.Label>
+                    <Form.Label className="fw-bold small text-secondary">Email <span className="text-danger">*</span></Form.Label>
                     <Form.Control 
                         type="email" 
                         placeholder="votre.email@exemple.com" 
@@ -122,9 +124,20 @@ const Register = () => {
                     />
                 </Form.Group>
 
+                <Form.Group className="mb-3" controlId="regEntreprise">
+                    <Form.Label className="fw-bold small text-secondary">Entreprise <span className="text-muted">(facultatif)</span></Form.Label>
+                    <Form.Control 
+                        type="text" 
+                        placeholder="Nom de votre entreprise" 
+                        className="py-2 bg-light border-0"
+                        name="entreprise"
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+
                 {/* Mot de passe */}
                 <Form.Group className="mb-3" controlId="regPassword">
-                    <Form.Label className="fw-bold small text-secondary">Mot de passe</Form.Label>
+                    <Form.Label className="fw-bold small text-secondary">Mot de passe <span className="text-danger">*</span></Form.Label>
                     <InputGroup>
                         <Form.Control
                             type={showPassword ? "text" : "password"}
@@ -147,7 +160,7 @@ const Register = () => {
 
                 {/* Confirmer le mot de passe */}
                 <Form.Group className="mb-4" controlId="regConfirmPassword">
-                    <Form.Label className="fw-bold small text-secondary">Confirmer le mot de passe</Form.Label>
+                    <Form.Label className="fw-bold small text-secondary">Confirmer le mot de passe <span className="text-danger">*</span></Form.Label>
                     <InputGroup>
                         <Form.Control
                             type={showConfirmPassword ? "text" : "password"}
@@ -173,10 +186,16 @@ const Register = () => {
                     <Form.Check type="checkbox" id="terms-check">
                         <Form.Check.Input type="checkbox" required /> {/* required ajouté pour obliger à cocher */}
                         <Form.Check.Label className="small text-muted" style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>
-                            J'accepte les <a href="#" style={{ color: theme.colors.primary }}>conditions d'utilisation</a> et la <a href="#" style={{ color: theme.colors.primary }}>politique de confidentialité</a>
+                            J'accepte les <a href="/ConditionsUtilisation" style={{ color: theme.colors.primary }}>conditions d'utilisation</a> et la <a href="/PolitiqueConfidentialite" style={{ color: theme.colors.primary }}>politique de confidentialité</a>
                         </Form.Check.Label>
                     </Form.Check>
                 </Form.Group>
+
+                <div className="text-center mb-3">
+                    <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                        <span className="text-danger">*</span> Champs obligatoires
+                    </small>
+                </div>
 
                 <Button
                     variant="primary"
@@ -194,9 +213,7 @@ const Register = () => {
                     Se connecter
                 </Link>
             </div>
-            <div className="text-center mt-3 small text-muted">
-                Ou s'inscrire avec
-            </div>
+
             {/* Vous pourrez ajouter des boutons de réseaux sociaux ici plus tard */}
         </AuthLayout>
     );
