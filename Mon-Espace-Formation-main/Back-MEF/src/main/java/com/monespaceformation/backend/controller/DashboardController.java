@@ -132,73 +132,75 @@ public class DashboardController {
             int heuresCoursPrevues = 0;
 
             for (Training training : formations) {
-                // Trouver toutes les sessions qui correspondent à cette formation (par titre)
-                List<SessionFormation> sessions = sessionRepository.findAll();
-                List<SessionFormation> relatedSessions = new ArrayList<>();
-                for (SessionFormation session : sessions) {
-                    if (session.getTitle() != null && training.getTitle() != null 
-                        && session.getTitle().equals(training.getTitle())) {
-                        relatedSessions.add(session);
+                // Trouver directement les inscriptions liées à cette formation par formationId
+                List<Inscription> inscriptions = inscriptionRepository.findByFormationId(training.getId());
+                
+                // Si aucune inscription trouvée par formationId, essayer de trouver via les sessions (compatibilité)
+                if (inscriptions.isEmpty()) {
+                    // Trouver toutes les sessions qui correspondent à cette formation (par titre)
+                    List<SessionFormation> sessions = sessionRepository.findAll();
+                    for (SessionFormation session : sessions) {
+                        if (session.getTitle() != null && training.getTitle() != null 
+                            && session.getTitle().equals(training.getTitle())) {
+                            List<Inscription> sessionInscriptions = inscriptionRepository.findBySessionId(session.getId());
+                            inscriptions.addAll(sessionInscriptions);
+                        }
                     }
                 }
 
-                // Pour chaque session, trouver les inscriptions
+                // Traiter toutes les inscriptions trouvées
                 List<TrainerDashboardDTO.InscritInfo> inscrits = new ArrayList<>();
-                for (SessionFormation session : relatedSessions) {
-                    List<Inscription> inscriptions = inscriptionRepository.findBySessionId(session.getId());
+                for (Inscription inscription : inscriptions) {
+                    String userName = "N/A";
+                    String userEmail = "N/A";
+                    String userId = null;
                     
-                    for (Inscription inscription : inscriptions) {
-                        String userName = "N/A";
-                        String userEmail = "N/A";
-                        String userId = null;
-                        
-                        // Essayer d'abord de récupérer les informations depuis l'utilisateur (si userId existe)
-                        if (inscription.getUserId() != null && !inscription.getUserId().isEmpty()) {
-                            Optional<User> userOpt = userRepository.findById(inscription.getUserId());
-                            if (userOpt.isPresent()) {
-                                User user = userOpt.get();
-                                userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
-                                            (user.getNom() != null ? user.getNom() : "");
-                                userName = userName.trim();
-                                if (userName.isEmpty()) {
-                                    userName = user.getEmail() != null ? user.getEmail() : "N/A";
-                                }
-                                userEmail = user.getEmail() != null ? user.getEmail() : "N/A";
-                                userId = user.getId();
-                            }
-                        }
-                        
-                        // Si pas d'utilisateur trouvé, utiliser les données du participant (formulaire)
-                        if ((userName.equals("N/A") || userName.isEmpty()) && inscription.getParticipant() != null) {
-                            com.monespaceformation.backend.model.Participant participant = inscription.getParticipant();
-                            String prenom = participant.getPrenom() != null ? participant.getPrenom() : "";
-                            String nom = participant.getNom() != null ? participant.getNom() : "";
-                            userName = (prenom + " " + nom).trim();
+                    // Essayer d'abord de récupérer les informations depuis l'utilisateur (si userId existe)
+                    if (inscription.getUserId() != null && !inscription.getUserId().isEmpty()) {
+                        Optional<User> userOpt = userRepository.findById(inscription.getUserId());
+                        if (userOpt.isPresent()) {
+                            User user = userOpt.get();
+                            userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
+                                        (user.getNom() != null ? user.getNom() : "");
+                            userName = userName.trim();
                             if (userName.isEmpty()) {
-                                userName = "Participant";
+                                userName = user.getEmail() != null ? user.getEmail() : "N/A";
                             }
-                            userEmail = participant.getEmail() != null ? participant.getEmail() : "N/A";
-                            // Pour les participants sans compte, utiliser l'ID de l'inscription comme identifiant
-                            userId = inscription.getId();
+                            userEmail = user.getEmail() != null ? user.getEmail() : "N/A";
+                            userId = user.getId();
                         }
-                        
-                        // Si toujours pas de nom, utiliser l'email ou un identifiant par défaut
-                        if (userName.equals("N/A") || userName.isEmpty()) {
-                            userName = userEmail != null && !userEmail.equals("N/A") ? userEmail : "Participant inconnu";
-                        }
-                        
-                        // Créer l'info d'inscrit
-                        TrainerDashboardDTO.InscritInfo inscritInfo = new TrainerDashboardDTO.InscritInfo(
-                            userId != null ? userId : inscription.getId(),
-                            userName,
-                            userEmail,
-                            inscription.getDateInscription() != null ? 
-                                inscription.getDateInscription().toString() : "N/A",
-                            inscription.getStatus() != null ? inscription.getStatus() : "N/A"
-                        );
-                        inscrits.add(inscritInfo);
-                        totalEleves++;
                     }
+                    
+                    // Si pas d'utilisateur trouvé, utiliser les données du participant (formulaire)
+                    if ((userName.equals("N/A") || userName.isEmpty()) && inscription.getParticipant() != null) {
+                        com.monespaceformation.backend.model.Participant participant = inscription.getParticipant();
+                        String prenom = participant.getPrenom() != null ? participant.getPrenom() : "";
+                        String nom = participant.getNom() != null ? participant.getNom() : "";
+                        userName = (prenom + " " + nom).trim();
+                        if (userName.isEmpty()) {
+                            userName = "Participant";
+                        }
+                        userEmail = participant.getEmail() != null ? participant.getEmail() : "N/A";
+                        // Pour les participants sans compte, utiliser l'ID de l'inscription comme identifiant
+                        userId = inscription.getId();
+                    }
+                    
+                    // Si toujours pas de nom, utiliser l'email ou un identifiant par défaut
+                    if (userName.equals("N/A") || userName.isEmpty()) {
+                        userName = userEmail != null && !userEmail.equals("N/A") ? userEmail : "Participant inconnu";
+                    }
+                    
+                    // Créer l'info d'inscrit
+                    TrainerDashboardDTO.InscritInfo inscritInfo = new TrainerDashboardDTO.InscritInfo(
+                        userId != null ? userId : inscription.getId(),
+                        userName,
+                        userEmail,
+                        inscription.getDateInscription() != null ? 
+                            inscription.getDateInscription().toString() : "N/A",
+                        inscription.getStatus() != null ? inscription.getStatus() : "N/A"
+                    );
+                    inscrits.add(inscritInfo);
+                    totalEleves++;
                 }
 
                 // Calculer les heures de cours prévues (approximatif : 35h par formation)
