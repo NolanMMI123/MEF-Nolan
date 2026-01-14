@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/sessions")
 // 👇 Autorise React (Vite utilise souvent le port 5173, sinon mettez 3000)
-@CrossOrigin(origins = "http://localhost:5173") 
+@CrossOrigin(originPatterns = {"http://localhost:5173", "https://*.vercel.app"})
 public class SessionController {
 
     @Autowired

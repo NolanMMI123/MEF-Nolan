@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/settings")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(originPatterns = {"http://localhost:5173", "https://*.vercel.app"})
 public class SettingsController {
 
     @Autowired

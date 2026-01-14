@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/attestations")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(originPatterns = {"http://localhost:5173", "https://*.vercel.app"})
 public class AttestationController {
 
     @Autowired

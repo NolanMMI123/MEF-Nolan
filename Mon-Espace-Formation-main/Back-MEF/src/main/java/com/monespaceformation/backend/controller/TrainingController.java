@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/trainings")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(originPatterns = {"http://localhost:5173", "https://*.vercel.app"})
 public class TrainingController {
 
     @Autowired
