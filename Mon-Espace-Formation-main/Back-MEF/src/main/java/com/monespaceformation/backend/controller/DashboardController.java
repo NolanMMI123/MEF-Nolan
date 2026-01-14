@@ -55,7 +55,8 @@ public class DashboardController {
 
             for (Inscription insc : mesInscriptions) {
                 // On cherche la session correspondante à l'inscription
-                Optional<SessionFormation> sessionOpt = sessionRepository.findById(insc.getSessionId());
+                String sessionId = insc.getSessionId();
+                Optional<SessionFormation> sessionOpt = (sessionId != null) ? sessionRepository.findById(sessionId) : Optional.empty();
                 
                 if (sessionOpt.isPresent()) {
                     SessionFormation session = sessionOpt.get();
@@ -156,8 +157,9 @@ public class DashboardController {
                     String userId = null;
                     
                     // Essayer d'abord de récupérer les informations depuis l'utilisateur (si userId existe)
-                    if (inscription.getUserId() != null && !inscription.getUserId().isEmpty()) {
-                        Optional<User> userOpt = userRepository.findById(inscription.getUserId());
+                    String inscriptionUserId = inscription.getUserId();
+                    if (inscriptionUserId != null && !inscriptionUserId.isEmpty()) {
+                        Optional<User> userOpt = userRepository.findById(inscriptionUserId);
                         if (userOpt.isPresent()) {
                             User user = userOpt.get();
                             userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 

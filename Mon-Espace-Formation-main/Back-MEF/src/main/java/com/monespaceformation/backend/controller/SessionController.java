@@ -32,6 +32,9 @@ public class SessionController {
     // Ça permet de trouver une formation précise grâce à son ID
     @GetMapping("/{id}")
     public ResponseEntity<SessionFormation> getSessionById(@PathVariable String id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         // On cherche dans la base de données
         Optional<SessionFormation> session = sessionRepository.findById(id);
 
@@ -67,6 +70,9 @@ public class SessionController {
     @PutMapping("/{id}")
     public ResponseEntity<SessionFormation> updateSession(@PathVariable String id, @RequestBody SessionFormation sessionUpdate) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<SessionFormation> sessionOpt = sessionRepository.findById(id);
             if (sessionOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -118,6 +124,9 @@ public class SessionController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSession(@PathVariable String id) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<SessionFormation> sessionOpt = sessionRepository.findById(id);
             if (sessionOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();

@@ -113,6 +113,9 @@ public class UserController {
     @PutMapping("/trainer/{id}")
     public ResponseEntity<User> updateTrainer(@PathVariable String id, @RequestBody User userUpdate) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<User> userOpt = userRepository.findById(id);
             if (userOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -164,6 +167,9 @@ public class UserController {
     @GetMapping("/trainer/{id}")
     public ResponseEntity<User> getTrainerById(@PathVariable String id) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<User> userOpt = userRepository.findById(id);
             if (userOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();

@@ -52,7 +52,8 @@ public class InscriptionController {
             }
             
             // Vérifier que la session existe
-            Optional<SessionFormation> sessionOpt = sessionRepository.findById(inscription.getSessionId());
+            String sessionId = inscription.getSessionId();
+            Optional<SessionFormation> sessionOpt = (sessionId != null) ? sessionRepository.findById(sessionId) : Optional.empty();
             if (sessionOpt.isEmpty()) {
                 return ResponseEntity.badRequest().body("La session sélectionnée n'existe pas");
             }
@@ -71,7 +72,8 @@ public class InscriptionController {
             String trainingTitle = "N/A";
             
             // Récupérer le nom de l'utilisateur
-            Optional<User> userOpt = userRepository.findById(inscription.getUserId());
+            String userId = inscription.getUserId();
+            Optional<User> userOpt = (userId != null) ? userRepository.findById(userId) : Optional.empty();
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
                 userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
@@ -131,7 +133,8 @@ public class InscriptionController {
                 // Récupérer les informations de l'utilisateur
                 String userName = "N/A";
                 String userEmail = "N/A";
-                Optional<User> userOpt = userRepository.findById(insc.getUserId());
+                String inscUserId = insc.getUserId();
+                Optional<User> userOpt = (inscUserId != null) ? userRepository.findById(inscUserId) : Optional.empty();
                 if (userOpt.isPresent()) {
                     User user = userOpt.get();
                     userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
@@ -159,7 +162,8 @@ public class InscriptionController {
                 // Récupérer les informations de la session/formation
                 String trainingTitle = "N/A";
                 String sessionDate = "N/A";
-                Optional<SessionFormation> sessionOpt = sessionRepository.findById(insc.getSessionId());
+                String inscSessionId = insc.getSessionId();
+                Optional<SessionFormation> sessionOpt = (inscSessionId != null) ? sessionRepository.findById(inscSessionId) : Optional.empty();
                 if (sessionOpt.isPresent()) {
                     SessionFormation session = sessionOpt.get();
                     trainingTitle = session.getTitle() != null ? session.getTitle() : "N/A";
@@ -190,6 +194,9 @@ public class InscriptionController {
     @PutMapping("/{id}")
     public ResponseEntity<Inscription> updateInscription(@PathVariable String id, @RequestBody Inscription inscriptionUpdate) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<Inscription> inscriptionOpt = inscriptionRepository.findById(id);
             if (inscriptionOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();

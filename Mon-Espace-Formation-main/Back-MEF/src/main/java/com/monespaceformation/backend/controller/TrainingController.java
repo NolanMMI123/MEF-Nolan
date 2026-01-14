@@ -100,6 +100,9 @@ public class TrainingController {
     @GetMapping("/{id}")
     public ResponseEntity<Training> getTrainingById(@PathVariable String id) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<Training> training = trainingRepository.findById(id);
             if (training.isPresent()) {
                 return ResponseEntity.ok(training.get());
@@ -123,6 +126,9 @@ public class TrainingController {
             @RequestBody Training trainingUpdate,
             @RequestHeader(value = "X-Trainer-Id", required = false) String trainerIdHeader) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<Training> trainingOpt = trainingRepository.findById(id);
             if (trainingOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -208,6 +214,9 @@ public class TrainingController {
             @PathVariable String id,
             @RequestHeader(value = "X-Trainer-Id", required = false) String trainerIdHeader) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<Training> trainingOpt = trainingRepository.findById(id);
             if (trainingOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -251,6 +260,9 @@ public class TrainingController {
             @RequestBody Training trainingUpdate,
             @RequestHeader(value = "X-Trainer-Id", required = false) String trainerIdHeader) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
             Optional<Training> trainingOpt = trainingRepository.findById(id);
             if (trainingOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
